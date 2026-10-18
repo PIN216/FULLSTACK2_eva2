@@ -3,14 +3,12 @@ package com.pasteleria.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ordenes")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Orden {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
