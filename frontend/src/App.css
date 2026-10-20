@@ -6,42 +6,9 @@ body {
   display: flex;
   flex-direction: column;
 }
-
-.brand-font {
-  font-family: 'Pacifico', cursive;
-  color: #8B4513;
-}
-
-.text-brown {
-  color: #8B4513 !important;
-}
-
-.bg-pastel {
-  background-color: #FFF5E1;
-}
-
-.border-pastel {
-  border-color: #FFC0CB !important;
-}
-
-.btn-primary-custom {
-  background-color: #8B4513;
-  color: #FFF5E1;
-  border: none;
-  font-weight: bold;
-}
-
-.btn-primary-custom:hover {
-  background-color: #5D4037;
-  color: #FFFFFF;
-}
-
-.card-product {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid #FFC0CB;
-}
-
-.card-product:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(93, 64, 55, 0.12);
-}
+.brand-font { font-family: 'Pacifico', cursive; color: #8B4513; }
+.text-brown { color: #8B4513 !important; }
+.btn-primary-custom { background-color: #8B4513; color: #FFF5E1; border: none; font-weight: bold; }
+.btn-primary-custom:hover { background-color: #5D4037; color: #FFF; }
+.card-product { transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid #FFC0CB; }
+.card-product:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(93, 64, 55, 0.12); }

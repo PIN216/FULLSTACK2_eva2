@@ -1,0 +1,16 @@
+# Node / React
+node_modules/
+frontend/build/
+frontend/coverage/
+.env
+.env.local
+
+# Java / Maven
+backend/target/
+*.class
+
+# IDE / SO
+.idea/
+.vscode/
+*.iml
+.DS_Store

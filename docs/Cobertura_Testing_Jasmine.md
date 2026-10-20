@@ -5,17 +5,19 @@
 
 ## Matriz de Cobertura de Pruebas Unitarias (10/10)
 
-| N° | Tipo de Prueba | Componente / Función Evaluada | Comportamiento Esperado | Resultado |
-| :---: | :--- | :--- | :--- | :---: |
-| **1** | Persistencia CRUD | `DataService.getProductos()` | Retorna el listado inicial de productos cargados. | PASS |
-| **2** | Persistencia CRUD | `DataService.createProducto()` | Añade un nuevo producto con ID generado dinámicamente. | PASS |
-| **3** | Persistencia CRUD | `DataService.updateProducto()` | Modifica propiedades de un producto existente. | PASS |
-| **4** | Persistencia CRUD | `DataService.deleteProducto()` | Elimina un producto reduciendo la longitud del catálogo. | PASS |
-| **5** | Renderizado / Props | `ProductCard` (Props) | Renderiza nombre y precio formateado en el DOM. | PASS |
-| **6** | Renderizado Condicional | `ProductCard` (Ofertas) | Muestra el badge `badge-oferta` únicamente si `enOferta === true`. | PASS |
-| **7** | Simulación de Eventos | Botón Añadir (`onClick`) | Ejecuta la función callback pasando el objeto producto. | PASS |
-| **8** | Regla de Negocio | Descuento Adulto Mayor | Verifica que clientes con edad > 50 años reciban 50% de dcto. | PASS |
-| **9** | Regla de Negocio | Código Promocional | Valida activación del cupón `FELICES50` (10% vitalicio). | PASS |
-| **10** | Manejo de Estado | `DataService.createOrden()` | Genera orden de compra con prefijo `ORD-` y total acumulado. | PASS |
+Archivo: `frontend/src/tests/app.spec.js`. Las pruebas se ejecutan con `npm test` y no requieren el backend (se simula su ausencia y se usa el respaldo local).
 
-**Conclusión de Calidad**: Se alcanza el 100% de cumplimiento para el indicador IE2.2.1 de la rúbrica institucional (10 pruebas unitarias verificadas sin errores).
+| N° | Tipo de Prueba | Componente / Función Evaluada | Comportamiento Esperado |
+| :---: | :--- | :--- | :--- |
+| **1** | Persistencia CRUD | `ProductoService.getProductos()` | Retorna el catálogo inicial (4 productos). |
+| **2** | Persistencia CRUD | `ProductoService.createProducto()` | Añade un producto con ID generado y aumenta el catálogo en 1. |
+| **3** | Persistencia CRUD | `ProductoService.deleteProducto()` | Elimina el producto y reduce el catálogo en 1. |
+| **4** | Renderizado / Props | `ProductCard` (Props) | Renderiza nombre y precio formateado en el DOM. |
+| **5** | Renderizado Condicional | `ProductCard` (Ofertas) | Muestra el badge `badge-oferta` y el precio con descuento solo si `enOferta === true`. |
+| **6** | Simulación de Eventos | Botón Añadir (`onClick`) | Ejecuta el callback pasando el objeto producto. |
+| **7** | Regla de Negocio | `calcularBeneficios()` / `calcularTotales()` | Clientes con edad > 50 años reciben 50 % de descuento. |
+| **8** | Regla de Negocio | `calcularBeneficios()` / `calcularTotales()` | El cupón `FELICES50` otorga 10 % vitalicio. |
+| **9** | Manejo de Estado | `OrdenService.crearOrden()` | Genera la orden con ID de prefijo `ORD-` y el total indicado. |
+| **10** | Persistencia | `OrdenService.getOrdenes()` / `getOrdenById()` | Recupera las órdenes registradas. |
+
+> El resultado (PASS/FAIL) debe tomarse de la salida real de `npm test`; el reporte HTML de cobertura queda en `frontend/coverage/`.

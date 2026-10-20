@@ -3,75 +3,35 @@ import { StoreContext } from '../context/StoreContext';
 
 export const Navbar = () => {
   const { currentView, setCurrentView, cart, cartTotal, currentUser, logout } = useContext(StoreContext);
-  const totalItems = cart.reduce((acc, it) => acc + it.cantidad, 0);
+  const totalItems = cart.reduce((acc, i) => acc + i.cantidad, 0);
 
   return (
     <header className="sticky-top">
       <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom border-warning">
         <div className="container">
-          <button
-            className="navbar-brand text-brown fw-bold btn btn-link text-decoration-none fs-4 brand-font"
-            onClick={() => setCurrentView('home')}
-          >
+          <button className="navbar-brand text-brown fw-bold btn btn-link text-decoration-none fs-4 brand-font" onClick={() => setCurrentView('home')}>
             🍰 Pastelería Mil Sabores
           </button>
-
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navContent"
-          >
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navNav">
             <span className="navbar-toggler-icon"></span>
           </button>
-
-          <div className="collapse navbar-collapse" id="navContent">
+          <div className="collapse navbar-collapse" id="navNav">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${currentView === 'home' ? 'active fw-bold' : ''}`}
-                  onClick={() => setCurrentView('home')}
-                >
-                  Inicio
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${currentView === 'categorias' ? 'active fw-bold' : ''}`}
-                  onClick={() => setCurrentView('categorias')}
-                >
-                  Categorías
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className={`nav-link btn btn-link ${currentView === 'ofertas' ? 'active fw-bold' : ''}`}
-                  onClick={() => setCurrentView('ofertas')}
-                >
-                  Ofertas
-                </button>
-              </li>
+              <li className="nav-item"><button className={`nav-link btn btn-link ${currentView === 'home' ? 'active fw-bold' : ''}`} onClick={() => setCurrentView('home')}>Inicio</button></li>
+              <li className="nav-item"><button className={`nav-link btn btn-link ${currentView === 'categorias' ? 'active fw-bold' : ''}`} onClick={() => setCurrentView('categorias')}>Categorías</button></li>
+              <li className="nav-item"><button className={`nav-link btn btn-link ${currentView === 'ofertas' ? 'active fw-bold' : ''}`} onClick={() => setCurrentView('ofertas')}>Ofertas</button></li>
+              <li className="nav-item"><button className={`nav-link btn btn-link ${currentView === 'nosotros' ? 'active fw-bold' : ''}`} onClick={() => setCurrentView('nosotros')}>Nosotros</button></li>
+              <li className="nav-item"><button className={`nav-link btn btn-link ${currentView === 'blogs' ? 'active fw-bold' : ''}`} onClick={() => setCurrentView('blogs')}>Blog</button></li>
+              <li className="nav-item"><button className={`nav-link btn btn-link ${currentView === 'contacto' ? 'active fw-bold' : ''}`} onClick={() => setCurrentView('contacto')}>Contacto</button></li>
               {currentUser?.rol === 'admin' && (
-                <li className="nav-item">
-                  <button
-                    className={`nav-link btn btn-link text-danger fw-bold ${currentView.startsWith('admin') ? 'active' : ''}`}
-                    onClick={() => setCurrentView('admin_dashboard')}
-                  >
-                    Panel Admin
-                  </button>
-                </li>
+                <li className="nav-item"><button className={`nav-link btn btn-link text-danger fw-bold ${currentView.startsWith('admin') ? 'active' : ''}`} onClick={() => setCurrentView('admin_dashboard')}>Admin Panel</button></li>
               )}
             </ul>
-
             <div className="d-flex align-items-center gap-2">
-              <button
-                className="btn btn-success d-flex align-items-center gap-2"
-                onClick={() => setCurrentView('carrito')}
-              >
+              <button className="btn btn-success d-flex align-items-center gap-2" onClick={() => setCurrentView('carrito')}>
                 <span>🛒 Carrito ({totalItems})</span>
                 <span className="badge bg-light text-success">${cartTotal.toLocaleString('es-CL')}</span>
               </button>
-
               {currentUser ? (
                 <div className="d-flex align-items-center gap-2">
                   <span className="fw-bold text-brown">👤 {currentUser.nombre}</span>
@@ -79,12 +39,8 @@ export const Navbar = () => {
                 </div>
               ) : (
                 <div className="d-flex gap-2">
-                  <button className="btn btn-outline-primary" onClick={() => setCurrentView('login')}>
-                    Ingresar
-                  </button>
-                  <button className="btn btn-primary" onClick={() => setCurrentView('registro')}>
-                    Registrarse
-                  </button>
+                  <button className="btn btn-outline-primary" onClick={() => setCurrentView('login')}>Ingresar</button>
+                  <button className="btn btn-primary" onClick={() => setCurrentView('registro')}>Registrarse</button>
                 </div>
               )}
             </div>

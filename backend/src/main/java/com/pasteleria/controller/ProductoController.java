@@ -1,45 +1,41 @@
 package com.pasteleria.controller;
-
 import com.pasteleria.model.Producto;
-import com.pasteleria.service.ProductoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.pasteleria.repository.ProductoRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/productos")
+@RestController @RequestMapping("/api/productos")
 public class ProductoController {
+    private final ProductoRepository repo;
 
-    @Autowired
-    private ProductoService productoService;
+    public ProductoController(ProductoRepository repo) { this.repo = repo; }
 
-    @GetMapping
-    public List<Producto> listar() {
-        return productoService.listarTodos();
-    }
+    @GetMapping public List<Producto> listar() { return repo.findAll(); }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerPorId(@PathVariable Long id) {
-        return productoService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public Producto obtener(@PathVariable Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
     }
 
-    @PostMapping
-    public Producto crear(@RequestBody Producto producto) {
-        return productoService.guardar(producto);
+    @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    public Producto crear(@RequestBody Producto p) {
+        p.setId(null); // el id lo genera la base de datos
+        return repo.save(p);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizar(@PathVariable Long id, @RequestBody Producto detalles) {
-        return ResponseEntity.ok(productoService.actualizar(id, detalles));
+    public Producto actualizar(@PathVariable Long id, @RequestBody Producto p) {
+        if (!repo.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado");
+        p.setId(id);
+        return repo.save(p);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        productoService.eliminar(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        if (!repo.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado");
+        repo.deleteById(id);
     }
 }

@@ -1,23 +1,29 @@
 package com.pasteleria.model;
-
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
-@Table(name = "ordenes")
-@Data
-@NoArgsConstructor
+@Entity @Table(name = "ordenes") @Data
 public class Orden {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String clienteNombre;
     private String clienteCorreo;
     private String direccionCalle;
-    private String comuna;
+    private String direccionComuna;
+    private Double subtotal;
+    private Double descuento;
     private Double total;
-    private LocalDateTime fechaCreacion = LocalDateTime.now();
+    private LocalDateTime fecha;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "orden_items", joinColumns = @JoinColumn(name = "orden_id"))
+    private List<ItemOrden> items = new ArrayList<>();
+
+    @PrePersist
+    void antesDeGuardar() {
+        if (fecha == null) fecha = LocalDateTime.now();
+    }
 }

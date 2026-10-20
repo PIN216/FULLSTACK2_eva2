@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { Home } from './views/Home';
 import { Categorias } from './views/Categorias';
+import { BlogsView } from './views/BlogsView';
 import { DetalleProducto } from './views/DetalleProducto';
 import { CarritoView } from './views/CarritoView';
 import { CheckoutView } from './views/CheckoutView';
@@ -13,6 +14,9 @@ import { OfertasView } from './views/OfertasView';
 import { LoginView } from './views/LoginView';
 import { RegistroView } from './views/RegistroView';
 import { DashboardView } from './views/admin/DashboardView';
+import { DetalleBlog } from './components/tienda/DetalleBlog';
+import { NosotrosView } from './components/tienda/NosotrosView';
+import { ContactoView } from './components/tienda/ContactoView';
 
 const MainRouter = () => {
   const { currentView } = useContext(StoreContext);
@@ -21,6 +25,10 @@ const MainRouter = () => {
     switch (currentView) {
       case 'home': return <Home />;
       case 'categorias': return <Categorias />;
+      case 'blogs': return <BlogsView />;
+      case 'detalle_blog': return <DetalleBlog />;
+      case 'nosotros': return <NosotrosView />;
+      case 'contacto': return <ContactoView />;
       case 'detalle_producto': return <DetalleProducto />;
       case 'carrito': return <CarritoView />;
       case 'checkout': return <CheckoutView />;
@@ -37,9 +45,7 @@ const MainRouter = () => {
   return (
     <div className="d-flex flex-column min-vh-100">
       <Navbar />
-      <main className="flex-grow-1">
-        {renderView()}
-      </main>
+      <main className="flex-grow-1">{renderView()}</main>
       <Footer />
     </div>
   );

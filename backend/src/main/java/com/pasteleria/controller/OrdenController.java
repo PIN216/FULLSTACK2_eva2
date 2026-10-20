@@ -1,28 +1,31 @@
 package com.pasteleria.controller;
-
 import com.pasteleria.model.Orden;
-import com.pasteleria.service.OrdenService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.pasteleria.repository.OrdenRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/ordenes")
+@RestController @RequestMapping("/api/ordenes")
 public class OrdenController {
+    private final OrdenRepository repo;
 
-    @Autowired
-    private OrdenService ordenService;
+    public OrdenController(OrdenRepository repo) { this.repo = repo; }
 
-    @GetMapping
-    public List<Orden> listar() {
-        return ordenService.listarTodas();
+    @GetMapping public List<Orden> listar() { return repo.findAll(); }
+
+    @GetMapping("/{id}")
+    public Orden obtener(@PathVariable Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orden no encontrada"));
     }
 
-    @PostMapping
-    public ResponseEntity<Orden> crearOrden(@RequestBody Orden orden) {
-        Orden nueva = ordenService.registrarOrden(orden);
-        return ResponseEntity.ok(nueva);
+    @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    public Orden crear(@RequestBody Orden o) {
+        if (o.getTotal() == null || o.getTotal() < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El total de la orden es obligatorio");
+        }
+        o.setId(null);
+        return repo.save(o);
     }
 }
