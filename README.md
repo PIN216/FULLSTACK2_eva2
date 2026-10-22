@@ -19,7 +19,7 @@ Contiene la solución completa requerida:
 
 Levanta primero el backend y luego el frontend (en dos terminales).
 
-### Backend (http://localhost:8080)
+### Backend (http://localhost:9091)
 ```bash
 cd backend
 mvn spring-boot:run
