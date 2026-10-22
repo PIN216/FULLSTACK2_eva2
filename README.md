@@ -20,6 +20,10 @@ Contiene la solución completa requerida:
 Levanta primero el backend y luego el frontend (en dos terminales).
 
 ### Backend (http://localhost:9091)
+
+#Para arrancar el backend haga click derecho sobre backend\src\main\java\com\pasteleria\PasteleriaApplication.java y seleccione "Run java"
+
+### Backend (http://localhost:9091)
 ```bash
 cd backend
 mvn spring-boot:run
