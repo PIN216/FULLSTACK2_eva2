@@ -1,17 +1,29 @@
 // URL del backend. En react-scripts se puede cambiar con REACT_APP_API_URL (archivo .env).
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:9091/api';
 
 const LS_PRODUCTOS = 'pms_productos';
 const LS_ORDENES = 'pms_ordenes';
+const LS_CATEGORIAS = 'pms_categorias';
+const IMAGEN_TORTA_MANJAR = 'https://www.elingenio.cl/productos/bizcocho-manjar-lucuma.jpg';
+const IMAGEN_TORTA_MANJAR_ANTERIOR = 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=600';
 
 const PRODUCTOS_POR_DEFECTO = [
   { id: 1, nombre: "Torta Cuadrada de Chocolate", categoria: "Tortas Cuadradas", precio: 45000, stock: 12, enOferta: false, descuento: 0, descripcion: "Capas de ganache con avellanas.", imagen: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600" },
-  { id: 2, nombre: "Torta Circular de Manjar", categoria: "Tortas Circulares", precio: 42000, stock: 4, enOferta: true, descuento: 15, descripcion: "Receta tradicional chilena con manjar casero.", imagen: "https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=600" },
+  { id: 2, nombre: "Torta Circular de Manjar", categoria: "Tortas Circulares", precio: 42000, stock: 4, enOferta: true, descuento: 15, descripcion: "Receta tradicional chilena con manjar casero.", imagen: IMAGEN_TORTA_MANJAR },
   { id: 3, nombre: "Cheesecake Sin Azúcar", categoria: "Sin Azúcar", precio: 47000, stock: 5, enOferta: false, descuento: 0, descripcion: "Suave y cremoso postre saludable.", imagen: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=600" },
   { id: 4, nombre: "Brownie Sin Gluten", categoria: "Sin Gluten", precio: 4000, stock: 25, enOferta: true, descuento: 10, descripcion: "Rico chocolate amargo apto para celíacos.", imagen: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600" }
 ];
 
+const CATEGORIAS_POR_DEFECTO = [
+  { id: 1, nombre: "Tortas Cuadradas", descripcion: "Tradicionales y para celebraciones grandes" },
+  { id: 2, nombre: "Tortas Circulares", descripcion: "Recetas chilenas clásicas con manjar casero" },
+  { id: 3, nombre: "Sin Azúcar", descripcion: "Opciones saludables endulzadas naturalmente" },
+  { id: 4, nombre: "Sin Gluten", descripcion: "100% libres de gluten, certificadas" }
+];
+
 // ---------- Respaldo local (cuando el backend no responde) ----------
+// La fuente de verdad es la base SQL del backend (DataLoader). Este respaldo solo existe para que el
+// catálogo se pueda ver con el servidor apagado y para las pruebas unitarias.
 const leer = (clave) => {
   try {
     const v = JSON.parse(localStorage.getItem(clave));
@@ -21,13 +33,33 @@ const leer = (clave) => {
   }
 };
 const guardar = (clave, lista) => localStorage.setItem(clave, JSON.stringify(lista));
+const actualizarImagenTortaManjar = (productos) => {
+  let actualizado = false;
+  const lista = productos.map((producto) => {
+    if (producto.id === 2 && producto.imagen === IMAGEN_TORTA_MANJAR_ANTERIOR) {
+      actualizado = true;
+      return { ...producto, imagen: IMAGEN_TORTA_MANJAR };
+    }
+    return producto;
+  });
+  if (actualizado) guardar(LS_PRODUCTOS, lista);
+  return lista;
+};
 
 // La primera vez se siembra el catálogo por defecto, así crear/eliminar no deja la lista vacía.
 const productosLocales = () => {
   const lista = leer(LS_PRODUCTOS);
-  if (lista) return lista;
+  if (lista) return actualizarImagenTortaManjar(lista);
   const inicial = PRODUCTOS_POR_DEFECTO.map((p) => ({ ...p }));
   guardar(LS_PRODUCTOS, inicial);
+  return inicial;
+};
+
+const categoriasLocales = () => {
+  const lista = leer(LS_CATEGORIAS);
+  if (lista) return lista;
+  const inicial = CATEGORIAS_POR_DEFECTO.map((c) => ({ ...c }));
+  guardar(LS_CATEGORIAS, inicial);
   return inicial;
 };
 
@@ -43,9 +75,16 @@ const request = async (ruta, opciones = {}) => {
     headers: { 'Content-Type': 'application/json' },
     ...opciones
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(`HTTP ${res.status}`);
+    err.status = res.status; // el servidor respondió con un error (409, 401, 404...)
+    throw err;
+  }
   return res.status === 204 ? null : res.json();
 };
+
+// true si el servidor no respondió (sin red / apagado); false si respondió con un código de error.
+const sinConexion = (err) => err.status === undefined;
 
 const idOrden = (idNumerico) => `ORD-${String(idNumerico).padStart(6, '0')}`;
 
@@ -64,7 +103,8 @@ const ordenDesdeBackend = (o) => ({
 export const ApiService = {
   getProductos: async () => {
     try {
-      return await request('/productos');
+      const productos = await request('/productos');
+      return actualizarImagenTortaManjar(productos);
     } catch {
       return productosLocales();
     }
@@ -98,6 +138,51 @@ export const ApiService = {
     }
   },
 
+  // ----- Categorías -----
+  getCategorias: async () => {
+    try {
+      return await request('/categorias');
+    } catch {
+      return categoriasLocales();
+    }
+  },
+
+  createCategoria: async (cat) => {
+    try {
+      return await request('/categorias', { method: 'POST', body: JSON.stringify(cat) });
+    } catch (err) {
+      if (!sinConexion(err)) throw err; // p. ej. 409 nombre duplicado: no se guarda en local
+      const nueva = { ...cat, id: Date.now() };
+      guardar(LS_CATEGORIAS, [...categoriasLocales(), nueva]);
+      return nueva;
+    }
+  },
+
+  deleteCategoria: async (id) => {
+    try {
+      await request(`/categorias/${id}`, { method: 'DELETE' });
+    } catch (err) {
+      if (!sinConexion(err)) throw err;
+      guardar(LS_CATEGORIAS, categoriasLocales().filter((c) => c.id !== Number(id)));
+    }
+  },
+
+  // ----- Usuarios (requieren backend: la contraseña se valida y cifra en el servidor) -----
+  getUsuarios: async () => {
+    try {
+      return await request('/usuarios');
+    } catch {
+      return [];
+    }
+  },
+
+  registrarUsuario: async (datos) =>
+    request('/usuarios/registro', { method: 'POST', body: JSON.stringify(datos) }),
+
+  login: async (correo, password) =>
+    request('/usuarios/login', { method: 'POST', body: JSON.stringify({ correo, password }) }),
+
+  // ----- Órdenes -----
   crearOrden: async (orden) => {
     const payload = {
       clienteNombre: orden.cliente?.nombre ?? '',

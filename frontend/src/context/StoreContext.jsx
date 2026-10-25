@@ -40,8 +40,19 @@ export const StoreProvider = ({ children }) => {
     });
   };
 
-  const removeFromCart = (id) => setCart((prev) => prev.filter((i) => i.id !== id));
+const removeFromCart = (id) => {
+    // Buscamos el producto para mostrar su nombre en la alerta (opcional pero recomendado)
+    const productoAEliminar = cart.find((i) => i.id === id);
+    const nombre = productoAEliminar ? productoAEliminar.nombre : 'este producto';
 
+    // Muestra la ventana emergente de confirmación
+    const confirmacion = window.confirm(`¿Estás seguro de que deseas eliminar "${nombre}" del carrito?`);
+
+    // Si el usuario acepta (clic en Aceptar), se procede a eliminarlo
+    if (confirmacion) {
+      setCart((prev) => prev.filter((i) => i.id !== id));
+    }
+  };
   const updateQuantity = (id, cantidad) => {
     if (cantidad <= 0) { removeFromCart(id); return; }
     setCart((prev) => prev.map((i) => (i.id === id ? { ...i, cantidad: Math.min(cantidad, tope(i)) } : i)));

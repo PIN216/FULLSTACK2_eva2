@@ -8,15 +8,18 @@ export const LoginView = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const u = UsuarioService.buscarUsuario(correo);
-    if (!u || u.password !== password) {
-      setError('Credenciales incorrectas.');
-      return;
+    setError('');
+    try {
+      const u = await UsuarioService.login(correo.trim(), password);
+      login(u);
+      setCurrentView(u.rol === 'admin' ? 'admin_dashboard' : 'home');
+    } catch (err) {
+      setError(err.status === 401
+        ? 'Credenciales incorrectas.'
+        : 'No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.');
     }
-    login(u);
-    setCurrentView(u.rol === 'admin' ? 'admin_dashboard' : 'home');
   };
 
   return (

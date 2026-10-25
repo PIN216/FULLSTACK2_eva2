@@ -1,16 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { UsuarioService } from '../services/usuarioService';
-import { calcularBeneficios, calcularEdad } from '../services/descuentoService';
+import { calcularEdad } from '../services/descuentoService';
 
 export const RegistroView = () => {
   const { setCurrentView } = useContext(StoreContext);
   const [form, setForm] = useState({ nombre: '', correo: '', password: '', fechaNacimiento: '', codigoPromo: '' });
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const correo = form.correo.trim().toLowerCase();
+    setError('');
 
     const edad = calcularEdad(form.fechaNacimiento);
     if (edad === null || edad < 0 || edad > 120) {
@@ -21,22 +21,22 @@ export const RegistroView = () => {
       setError('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
-    if (UsuarioService.buscarUsuario(correo)) {
-      setError('Ya existe una cuenta con ese correo.');
-      return;
-    }
 
-    // Beneficios calculados una sola vez al registrarse (mayor de 50 años, cupón FELICES50)
-    const beneficios = calcularBeneficios(form);
-    UsuarioService.createUsuario({
-      nombre: form.nombre.trim(),
-      correo,
-      password: form.password,
-      fechaNacimiento: form.fechaNacimiento,
-      rol: 'cliente',
-      beneficios
-    });
-    setCurrentView('login');
+    try {
+      // El servidor cifra la contraseña y calcula los beneficios (mayor de 50 años, cupón FELICES50).
+      await UsuarioService.registrar({
+        nombre: form.nombre.trim(),
+        correo: form.correo.trim().toLowerCase(),
+        password: form.password,
+        fechaNacimiento: form.fechaNacimiento,
+        codigoPromo: form.codigoPromo.trim()
+      });
+      setCurrentView('login');
+    } catch (err) {
+      if (err.status === 409) setError('Ya existe una cuenta con ese correo.');
+      else if (err.status === 400) setError('Revisa los datos ingresados.');
+      else setError('No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.');
+    }
   };
 
   return (
