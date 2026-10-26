@@ -1,0 +1,12 @@
+com\pasteleria\controller\OrdenController.class
+com\pasteleria\model\ItemOrden.class
+com\pasteleria\model\Orden.class
+com\pasteleria\model\Producto.class
+com\pasteleria\config\DataLoader.class
+com\pasteleria\repository\ProductoRepository.class
+com\pasteleria\controller\ProductoController.class
+com\pasteleria\service\ProductoService.class
+com\pasteleria\PasteleriaApplication.class
+com\pasteleria\service\OrdenService.class
+com\pasteleria\config\CorsConfig.class
+com\pasteleria\repository\OrdenRepository.class
