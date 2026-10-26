@@ -26,7 +26,7 @@ public class DataLoader implements CommandLineRunner {
     private final String adminPassword;
 
     public DataLoader(CategoriaRepository categorias, ProductoRepository productos, UsuarioRepository usuarios,
-                      PasswordEncoder encoder, @Value("${app.admin.password:Admin1234}") String adminPassword) {
+                        PasswordEncoder encoder, @Value("${app.admin.password:Admin1234}") String adminPassword) {
         this.categorias = categorias;
         this.productos = productos;
         this.usuarios = usuarios;
@@ -83,7 +83,7 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private Producto producto(String nombre, String categoria, double precio, int stock,
-                              boolean enOferta, double descuento, String descripcion, String imagen) {
+                                boolean enOferta, double descuento, String descripcion, String imagen) {
         Producto p = new Producto();
         p.setNombre(nombre);
         p.setCategoria(categoria);
