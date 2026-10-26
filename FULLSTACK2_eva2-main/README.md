@@ -11,8 +11,8 @@ Contiene la solución completa requerida:
 | Herramienta | Versión |
 | :--- | :--- |
 | Node.js | 18 o superior |
-| JDK | 17 o 21 (recomendado) |
-| Maven | 3.8 o superior |
+| JDK | 25 (LTS) |
+| Maven | 3.9 o superior (recomendado) |
 | Google Chrome / Chromium | solo para `npm test` (si Karma no lo encuentra, define `CHROME_BIN`) |
 
 ## Instrucciones de Ejecución
