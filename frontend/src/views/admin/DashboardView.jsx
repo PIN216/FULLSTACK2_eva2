@@ -17,12 +17,17 @@ export const DashboardView = () => {
   const esAdmin = currentUser?.rol === 'admin';
 
   const [productos, setProductos] = useState([]);
-  const [categorias] = useState(() => CategoriaService.getCategorias());
-  const [form, setForm] = useState({ ...FORM_VACIO, categoria: categorias[0]?.nombre || '' });
+  const [categorias, setCategorias] = useState([]);
+  const [form, setForm] = useState({ ...FORM_VACIO });
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (esAdmin) ProductoService.getProductos().then(setProductos);
+    if (!esAdmin) return;
+    ProductoService.getProductos().then(setProductos);
+    CategoriaService.getCategorias().then((cats) => {
+      setCategorias(cats);
+      setForm((f) => (f.categoria ? f : { ...f, categoria: cats[0]?.nombre || '' }));
+    });
   }, [esAdmin]);
 
   // Vista protegida (RF-06): solo el rol admin entra.

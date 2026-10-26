@@ -5,7 +5,7 @@ export const AdminUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
-    setUsuarios(UsuarioService.getUsuarios());
+    UsuarioService.getUsuarios().then(setUsuarios);
   }, []);
 
   return (

@@ -1,21 +1,9 @@
+import { ApiService } from './api';
+
+// Los usuarios viven en la base SQL del backend. La contraseña se valida y se cifra allá:
+// el navegador nunca recibe ni guarda contraseñas.
 export const UsuarioService = {
-  getUsuarios: () => {
-    try {
-      return JSON.parse(localStorage.getItem("pms_usuarios")) || [
-        { correo: "admin@milsabores.cl", password: "Admin1234", nombre: "Administrador General", rol: "admin" }
-      ];
-    } catch {
-      return [];
-    }
-  },
-  createUsuario: (u) => {
-    const list = UsuarioService.getUsuarios();
-    list.push(u);
-    localStorage.setItem("pms_usuarios", JSON.stringify(list));
-    return u;
-  },
-  buscarUsuario: (correo) => {
-    const list = UsuarioService.getUsuarios();
-    return list.find(u => u.correo.toLowerCase() === correo.toLowerCase());
-  }
+  getUsuarios: async () => ApiService.getUsuarios(),
+  registrar: async (datos) => ApiService.registrarUsuario(datos),
+  login: async (correo, password) => ApiService.login(correo, password)
 };

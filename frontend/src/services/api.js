@@ -3,6 +3,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:9091/api';
 
 const LS_PRODUCTOS = 'pms_productos';
 const LS_ORDENES = 'pms_ordenes';
+const LS_CATEGORIAS = 'pms_categorias';
 const IMAGEN_TORTA_MANJAR = 'https://www.elingenio.cl/productos/bizcocho-manjar-lucuma.jpg';
 const IMAGEN_TORTA_MANJAR_ANTERIOR = 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=600';
 
@@ -13,7 +14,16 @@ const PRODUCTOS_POR_DEFECTO = [
   { id: 4, nombre: "Brownie Sin Gluten", categoria: "Sin Gluten", precio: 4000, stock: 25, enOferta: true, descuento: 10, descripcion: "Rico chocolate amargo apto para celíacos.", imagen: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600" }
 ];
 
+const CATEGORIAS_POR_DEFECTO = [
+  { id: 1, nombre: "Tortas Cuadradas", descripcion: "Tradicionales y para celebraciones grandes" },
+  { id: 2, nombre: "Tortas Circulares", descripcion: "Recetas chilenas clásicas con manjar casero" },
+  { id: 3, nombre: "Sin Azúcar", descripcion: "Opciones saludables endulzadas naturalmente" },
+  { id: 4, nombre: "Sin Gluten", descripcion: "100% libres de gluten, certificadas" }
+];
+
 // ---------- Respaldo local (cuando el backend no responde) ----------
+// La fuente de verdad es la base SQL del backend (DataLoader). Este respaldo solo existe para que el
+// catálogo se pueda ver con el servidor apagado y para las pruebas unitarias.
 const leer = (clave) => {
   try {
     const v = JSON.parse(localStorage.getItem(clave));
@@ -45,6 +55,14 @@ const productosLocales = () => {
   return inicial;
 };
 
+const categoriasLocales = () => {
+  const lista = leer(LS_CATEGORIAS);
+  if (lista) return lista;
+  const inicial = CATEGORIAS_POR_DEFECTO.map((c) => ({ ...c }));
+  guardar(LS_CATEGORIAS, inicial);
+  return inicial;
+};
+
 const guardarOrdenLocal = (orden) => {
   const lista = leer(LS_ORDENES) || [];
   guardar(LS_ORDENES, [...lista, orden]);
@@ -57,9 +75,16 @@ const request = async (ruta, opciones = {}) => {
     headers: { 'Content-Type': 'application/json' },
     ...opciones
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(`HTTP ${res.status}`);
+    err.status = res.status; // el servidor respondió con un error (409, 401, 404...)
+    throw err;
+  }
   return res.status === 204 ? null : res.json();
 };
+
+// true si el servidor no respondió (sin red / apagado); false si respondió con un código de error.
+const sinConexion = (err) => err.status === undefined;
 
 const idOrden = (idNumerico) => `ORD-${String(idNumerico).padStart(6, '0')}`;
 
@@ -113,6 +138,51 @@ export const ApiService = {
     }
   },
 
+  // ----- Categorías -----
+  getCategorias: async () => {
+    try {
+      return await request('/categorias');
+    } catch {
+      return categoriasLocales();
+    }
+  },
+
+  createCategoria: async (cat) => {
+    try {
+      return await request('/categorias', { method: 'POST', body: JSON.stringify(cat) });
+    } catch (err) {
+      if (!sinConexion(err)) throw err; // p. ej. 409 nombre duplicado: no se guarda en local
+      const nueva = { ...cat, id: Date.now() };
+      guardar(LS_CATEGORIAS, [...categoriasLocales(), nueva]);
+      return nueva;
+    }
+  },
+
+  deleteCategoria: async (id) => {
+    try {
+      await request(`/categorias/${id}`, { method: 'DELETE' });
+    } catch (err) {
+      if (!sinConexion(err)) throw err;
+      guardar(LS_CATEGORIAS, categoriasLocales().filter((c) => c.id !== Number(id)));
+    }
+  },
+
+  // ----- Usuarios (requieren backend: la contraseña se valida y cifra en el servidor) -----
+  getUsuarios: async () => {
+    try {
+      return await request('/usuarios');
+    } catch {
+      return [];
+    }
+  },
+
+  registrarUsuario: async (datos) =>
+    request('/usuarios/registro', { method: 'POST', body: JSON.stringify(datos) }),
+
+  login: async (correo, password) =>
+    request('/usuarios/login', { method: 'POST', body: JSON.stringify({ correo, password }) }),
+
+  // ----- Órdenes -----
   crearOrden: async (orden) => {
     const payload = {
       clienteNombre: orden.cliente?.nombre ?? '',

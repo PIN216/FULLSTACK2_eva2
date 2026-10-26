@@ -26,7 +26,7 @@ const DEFAULT_PRODUCTS = [
     descuento: 15,
     stock: 8,
     descripcion: "Tradicional receta chilena con manjar casero y nueces seleccionadas.",
-    imagen: "https://www.elingenio.cl/productos/bizcocho-manjar-lucuma.jpg"
+    imagen: "https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=600"
   },
   {
     id: 3,
