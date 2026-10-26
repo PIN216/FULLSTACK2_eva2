@@ -1,5 +1,5 @@
 import React from 'react';
-import { precioFinal } from '../services/descuentoService';
+import { precioFinal } from '../../services/descuentoService';
 
 const clp = (n) => `$${Number(n).toLocaleString('es-CL')}`;
 
