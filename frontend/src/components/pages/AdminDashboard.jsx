@@ -118,7 +118,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* GRILLA DE ACCESOS RÁPIDOS / GRID DE MÓDULOS (Según Figura 9 y 10) */}
+          {/* GRILLA DE ACCESOS RÁPIDOS / GRID DE MÓDULOS*/}
           <div className="row g-3">
             {/* Módulo Dashboard */}
             <div className="col-md-3">
