@@ -11,7 +11,7 @@ export const Categorias = () => {
   const { addToCart, setSelectedProductId, setCurrentView } = useContext(StoreContext);
 
   useEffect(() => {
-    setCategorias(CategoriaService.getCategorias());
+    CategoriaService.getCategorias().then(setCategorias);
     ProductoService.getProductos().then(setProductos);
   }, []);
 

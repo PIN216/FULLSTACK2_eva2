@@ -14,6 +14,7 @@ import { OfertasView } from './views/OfertasView';
 import { LoginView } from './views/LoginView';
 import { RegistroView } from './views/RegistroView';
 import { DashboardView } from './views/admin/DashboardView';
+import AdminDashboard from './components/admin/AdminDashboard';
 import { DetalleBlog } from './components/tienda/DetalleBlog';
 import { NosotrosView } from './components/tienda/NosotrosView';
 import { ContactoView } from './components/tienda/ContactoView';
@@ -38,6 +39,8 @@ const MainRouter = () => {
       case 'login': return <LoginView />;
       case 'registro': return <RegistroView />;
       case 'admin_dashboard': return <DashboardView />;
+      // --- NUEVA VISTA PARA EL PANEL ADMINISTRATIVO PROFESIONAL ---
+      case 'admin_panel': return <AdminDashboard />;
       default: return <Home />;
     }
   };

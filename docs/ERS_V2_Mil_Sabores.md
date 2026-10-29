@@ -6,7 +6,7 @@
 ---
 
 ## 1. Alcance del Proyecto
-Actualización de la tienda online hacia una arquitectura moderna basada en React con Bootstrap en el frontend y Spring Boot en el backend, incorporando persistencia desacoplada y una batería de 10 pruebas unitarias con Jasmine y Karma.
+Actualización de la tienda online hacia una arquitectura moderna basada en React con Bootstrap en el frontend y Spring Boot en el backend, incorporando persistencia desacoplada y una batería de pruebas unitarias con Vitest.
 
 ## 2. Requerimientos Funcionales (RF)
 
@@ -19,4 +19,4 @@ Actualización de la tienda online hacia una arquitectura moderna basada en Reac
 | **RF-05** | Pasarela de Pago Simulada | Bifurcación del flujo de compra: vista de confirmación con generación de ID de orden o vista de reintento ante fallo bancario. |
 | **RF-06** | Panel Administrativo | Vista protegida con métricas de inventario, compras realizadas y operaciones CRUD completas sobre el catálogo de productos. |
 | **RF-07** | Integración Fullstack | API REST desacoplada construida en Java Spring Boot con configuración CORS para consumo desde el frontend React. |
-| **RF-08** | Calidad de Software | 10 pruebas unitarias en Jasmine/Karma que verifican renderizado, props, state, eventos y reglas de negocio. |
+| **RF-08** | Calidad de Software | Pruebas unitarias en Vitest que verifican renderizado, props, state, eventos y reglas de negocio. |
