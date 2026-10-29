@@ -92,7 +92,17 @@ export const DashboardView = () => {
 
   return (
     <div className="container-fluid py-4">
-      <h2 className="fw-bold text-brown mb-4">Panel de Administración</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 className="fw-bold text-brown mb-0">Panel de Administración (Gestión Operativa)</h2>
+        <div className="d-flex gap-2">
+          <button className="btn btn-outline-primary" onClick={() => setCurrentView('admin_panel')}>
+            <i className="bi bi-grid-fill me-1"></i> Ver Dashboard Resumen
+          </button>
+          <button className="btn btn-outline-secondary" onClick={() => setCurrentView('home')}>
+            <i className="bi bi-shop me-1"></i> Ir a la Tienda
+          </button>
+        </div>
+      </div>
 
       <div className="row">
         <div className="col-lg-6">

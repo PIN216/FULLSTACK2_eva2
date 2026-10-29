@@ -1,0 +1,22 @@
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/build/
+frontend/coverage/
+frontend/node_modules/.vite/
+frontend/node_modules/.cache/
+*.log
+
+# Java / Maven / Backend
+backend/target/
+target/
+.classpath
+.project
+.settings/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

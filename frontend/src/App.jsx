@@ -6,6 +6,9 @@ import { Home } from './views/Home';
 import { Categorias } from './views/Categorias';
 import { BlogsView } from './views/BlogsView';
 import { DetalleProducto } from './views/DetalleProducto';
+import { DetalleBlog } from './views/DetalleBlog';
+import { NosotrosView } from './views/NosotrosView';
+import { ContactoView } from './views/ContactoView';
 import { CarritoView } from './views/CarritoView';
 import { CheckoutView } from './views/CheckoutView';
 import { PagoExitoView } from './views/PagoExitoView';
@@ -14,8 +17,6 @@ import { OfertasView } from './views/OfertasView';
 import { LoginView } from './views/LoginView';
 import { RegistroView } from './views/RegistroView';
 import { DashboardView } from './views/admin/DashboardView';
-
-// --- RUTA CORREGIDA SEGÚN TUS CAPTURAS ---
 import AdminDashboard from './components/pages/AdminDashboard';
 
 const MainRouter = () => {
@@ -26,6 +27,9 @@ const MainRouter = () => {
       case 'home': return <Home />;
       case 'categorias': return <Categorias />;
       case 'blogs': return <BlogsView />;
+      case 'detalle_blog': return <DetalleBlog />;
+      case 'nosotros': return <NosotrosView />;
+      case 'contacto': return <ContactoView />;
       case 'detalle_producto': return <DetalleProducto />;
       case 'carrito': return <CarritoView />;
       case 'checkout': return <CheckoutView />;

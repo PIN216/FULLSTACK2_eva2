@@ -172,7 +172,7 @@ export const ApiService = {
     try {
       return await request('/usuarios');
     } catch {
-      return [];
+      return leer('pms_usuarios') || [{ correo: 'admin@milsabores.cl', nombre: 'Administrador General', rol: 'admin', beneficios: ['ADMIN'] }];
     }
   },
 

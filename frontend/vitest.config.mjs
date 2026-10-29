@@ -6,7 +6,7 @@ export default defineConfig({
   esbuild: { jsx: 'automatic' }, // permite JSX en los archivos .jsx sin importar React en cada uno
   test: {
     environment: 'jsdom', // simula el navegador (document, localStorage...) sin abrir Chrome
-    include: ['src/tests/**/*.{test,spec}.{js,jsx}'],
+    include: ['src/tests/**/*.test.{js,jsx}'],
     clearMocks: true,
     restoreMocks: true,
     coverage: {

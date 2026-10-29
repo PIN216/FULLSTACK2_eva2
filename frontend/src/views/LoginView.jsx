@@ -36,6 +36,19 @@ export const LoginView = () => {
           <div className="mb-3"><label className="form-label">Contraseña</label><input type="password" className="form-control" value={password} onChange={e => setPassword(e.target.value)} required /></div>
           <button type="submit" className="btn btn-primary-custom w-100 py-2">Ingresar</button>
         </form>
+        <div className="mt-3 pt-3 border-top text-center">
+          <small className="text-muted d-block mb-2">Credenciales demo: <code>admin@milsabores.cl</code> / <code>Admin1234</code></small>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-secondary w-100"
+            onClick={() => {
+              login({ correo: 'admin@milsabores.cl', nombre: 'Administrador General', rol: 'admin', beneficios: [] });
+              setCurrentView('admin_dashboard');
+            }}
+          >
+            <i className="bi bi-shield-lock me-1"></i> Acceso Rápido Administrador (Demo / Sin Backend)
+          </button>
+        </div>
       </div>
     </div>
   );
