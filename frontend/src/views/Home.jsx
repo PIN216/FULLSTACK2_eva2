@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ProductoService } from '../services/productoService';
 import { StoreContext } from '../context/StoreContext';
-import { ProductCard } from '../components/ProductCard';
+import { ProductCard } from '../components/pages/ProductCard';
 
 export const Home = () => {
   const [productos, setProductos] = useState([]);

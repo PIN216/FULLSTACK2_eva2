@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { BlogService } from '../services/blogService';
 import { StoreContext } from '../context/StoreContext';
-import { BlogCard } from '../components/tienda/BlogCard';
+import { BlogCard } from '../components/pages/BlogCard'; 
 
 export const BlogsView = () => {
   const blogs = BlogService.getBlogs();

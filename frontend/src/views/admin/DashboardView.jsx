@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import { ProductoService } from '../../services/productoService';
 import { CategoriaService } from '../../services/categoriaService';
-import { MostrarBoleta } from '../../components/admin/MostrarBoleta';
-import { ProductosCriticos } from '../../components/admin/ProductosCriticos';
-import { AdminCategorias } from '../../components/admin/AdminCategorias';
-import { AdminUsuarios } from '../../components/admin/AdminUsuarios';
-import { HistorialCompras } from '../../components/admin/HistorialCompras';
-import { AdminReportes } from '../../components/admin/AdminReportes';
+import { MostrarBoleta } from '../../components/pages/MostrarBoleta';
+import { ProductosCriticos } from '../../components/pages/ProductosCriticos';
+import { AdminCategorias } from '../../components/pages/AdminCategorias';
+import { AdminUsuarios } from '../../components/pages/AdminUsuarios';
+import { HistorialCompras } from '../../components/pages/HistorialCompras';
+import { AdminReportes } from '../../components/pages/AdminReportes';
 
 const IMAGEN_POR_DEFECTO = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600';
 const FORM_VACIO = { id: null, nombre: '', categoria: '', precio: '', stock: '', descripcion: '', imagen: '', enOferta: false, descuento: '' };

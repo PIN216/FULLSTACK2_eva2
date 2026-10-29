@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { CategoriaService } from '../services/categoriaService';
 import { ProductoService } from '../services/productoService';
 import { StoreContext } from '../context/StoreContext';
-import { ProductCard } from '../components/ProductCard';
+import { ProductCard } from '../components/pages/ProductCard';
 
 export const Categorias = () => {
   const [categorias, setCategorias] = useState([]);

@@ -14,10 +14,9 @@ import { OfertasView } from './views/OfertasView';
 import { LoginView } from './views/LoginView';
 import { RegistroView } from './views/RegistroView';
 import { DashboardView } from './views/admin/DashboardView';
-import AdminDashboard from './components/admin/AdminDashboard';
-import { DetalleBlog } from './components/tienda/DetalleBlog';
-import { NosotrosView } from './components/tienda/NosotrosView';
-import { ContactoView } from './components/tienda/ContactoView';
+
+// --- RUTA CORREGIDA SEGÚN TUS CAPTURAS ---
+import AdminDashboard from './components/pages/AdminDashboard';
 
 const MainRouter = () => {
   const { currentView } = useContext(StoreContext);
@@ -27,9 +26,6 @@ const MainRouter = () => {
       case 'home': return <Home />;
       case 'categorias': return <Categorias />;
       case 'blogs': return <BlogsView />;
-      case 'detalle_blog': return <DetalleBlog />;
-      case 'nosotros': return <NosotrosView />;
-      case 'contacto': return <ContactoView />;
       case 'detalle_producto': return <DetalleProducto />;
       case 'carrito': return <CarritoView />;
       case 'checkout': return <CheckoutView />;
@@ -39,7 +35,6 @@ const MainRouter = () => {
       case 'login': return <LoginView />;
       case 'registro': return <RegistroView />;
       case 'admin_dashboard': return <DashboardView />;
-      // --- NUEVA VISTA PARA EL PANEL ADMINISTRATIVO PROFESIONAL ---
       case 'admin_panel': return <AdminDashboard />;
       default: return <Home />;
     }
