@@ -2,11 +2,13 @@ import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { OrdenService } from '../services/ordenService';
 import { precioFinal } from '../services/descuentoService';
+import { validarNombre, validarCorreo, validarDireccion, validarComuna, primerError } from '../services/validacionService';
 
 export const CheckoutView = () => {
   const { cart, cartResumen, cartTotal, currentUser, clearCart, setLastOrder, setCurrentView } = useContext(StoreContext);
   const [form, setForm] = useState({ nombre: '', apellidos: '', correo: '', calle: '', comuna: '', simularError: false });
   const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (currentUser) {
@@ -29,6 +31,16 @@ export const CheckoutView = () => {
   const handlePay = async (e) => {
     e.preventDefault();
     if (enviando) return;
+
+    const errorForm = primerError(
+      validarNombre(form.nombre, 'El nombre'),
+      validarNombre(form.apellidos, 'El apellido'),
+      validarCorreo(form.correo),
+      validarDireccion(form.calle),
+      validarComuna(form.comuna)
+    );
+    if (errorForm) { setError(errorForm); return; }
+    setError('');
 
     const items = cart.map(i => ({ id: i.id, nombre: i.nombre, precio: precioFinal(i), cantidad: i.cantidad }));
 
@@ -57,7 +69,8 @@ export const CheckoutView = () => {
     <div className="container py-4" style={{ maxWidth: '700px' }}>
       <div className="card shadow-sm border-0 p-4">
         <h3 className="fw-bold text-brown mb-4">Checkout - Finalizar Compra</h3>
-        <form onSubmit={handlePay}>
+        {error && <div className="alert alert-danger py-2">{error}</div>}
+        <form onSubmit={handlePay} noValidate>
           <div className="mb-3"><label className="form-label">Nombre</label><input type="text" className="form-control" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} required /></div>
           <div className="mb-3"><label className="form-label">Apellidos</label><input type="text" className="form-control" value={form.apellidos} onChange={e => setForm({...form, apellidos: e.target.value})} required /></div>
           <div className="mb-3"><label className="form-label">Correo Electrónico</label><input type="email" className="form-control" value={form.correo} onChange={e => setForm({...form, correo: e.target.value})} required /></div>
