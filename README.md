@@ -3,7 +3,7 @@
 Este proyecto corresponde a la entrega de la Evaluación Parcial 2 de Desarrollo Fullstack II (Duoc UC).
 Contiene la solución completa requerida:
 - **frontend/**: Aplicación en React con Bootstrap, arquitectura basada en componentes (Single Responsibility), vistas públicas y panel administrativo, y pruebas unitarias con Vitest.
-- **backend/**: API REST desarrollada con Java Spring Boot y Spring Data JPA (H2 en memoria) para la persistencia e integración fullstack.
+- **backend/**: API REST desarrollada con Java Spring Boot y Base de datos en MySQL para la persistencia e integración fullstack.
 - **docs/**: Especificación de Requisitos de Software (ERS V2) y Documento de Cobertura de Testing.
 
 ## Requisitos
@@ -27,9 +27,9 @@ Levanta primero el backend y luego el frontend (en dos terminales).
 cd backend
 mvn spring-boot:run
 ```
-- Al arrancar, `DataLoader` inserta en la base SQL los datos iniciales: 4 categorías, 4 productos y el usuario administrador (con la contraseña cifrada con BCrypt). Si la tabla ya tiene datos, no los duplica.
+- Al arrancar, `Data` inserta en la base SQL los datos iniciales: 4 categorías, 4 productos y el usuario administrador (con la contraseña cifrada con BCrypt). Si la tabla ya tiene datos, no los duplica.
 - Endpoints: `/api/productos`, `/api/categorias`, `/api/usuarios` (`/registro` y `/login`) y `/api/ordenes`.
-- Base de datos H2 en memoria: los datos se reinician al detener el servidor. Consola en `http://localhost:9091/h2-console` (JDBC URL: `jdbc:h2:mem:milsaboresdb`, usuario `sa`, sin contraseña).
+- Base de datos MySQL: Los datos se guardan en una base de datos y se usa Data.sql para agregar datos a cada tabla al inicializar el backend, Consola en `http://localhost:9091/h2-console` (JDBC URL: `jdbc:h2:mem:milsaboresdb`, usuario `sa`, sin contraseña).
 - Pruebas del backend: `mvn test`.
 
 ### Frontend (http://localhost:3000)
