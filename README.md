@@ -29,7 +29,7 @@ mvn spring-boot:run
 ```
 - Al arrancar, `Data` inserta en la base SQL los datos iniciales: 4 categorías, 4 productos y el usuario administrador (con la contraseña cifrada con BCrypt). Si la tabla ya tiene datos, no los duplica.
 - Endpoints: `/api/productos`, `/api/categorias`, `/api/usuarios` (`/registro` y `/login`) y `/api/ordenes`.
-- Base de datos MySQL: Los datos se guardan en una base de datos y se usa Data.sql para agregar datos a cada tabla al inicializar el backend, Consola en `http://localhost:9091/h2-console` (JDBC URL: `jdbc:h2:mem:milsaboresdb`, usuario `sa`, sin contraseña).
+- Base de datos MySQL: Los datos se guardan en una base de datos y se usa Data.sql para agregar datos a cada tabla al inicializar el backend, baase de datos en puerto `http://localhost:9091` (nombre base de datos: `milsaboresbd`, usuario `sa`, contraseña`1234` ).
 - Pruebas del backend: `mvn test`.
 
 ### Frontend (http://localhost:3000)
