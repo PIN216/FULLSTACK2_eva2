@@ -6,12 +6,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
+/**
+ * Controlador REST para gestionar las operaciones CRUD de las categorías de productos.
+ * BASE URL: /api/categorias
+ */
 @RestController @RequestMapping("/api/categorias")
 public class CategoriaController {
     private final CategoriaRepository repo;
 
     public CategoriaController(CategoriaRepository repo) { this.repo = repo; }
 
+/**
+ * Obtiene la lista de todas las categorías de productos.
+ * @return Lista de categorías.
+ */
     @GetMapping public List<Categoria> listar() { return repo.findAll(); }
 
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
