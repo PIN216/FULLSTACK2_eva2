@@ -34,7 +34,8 @@ describe('Suite de Pruebas Unitarias - Pastelería Mil Sabores (Vitest)', () => 
 
   it('1. Debe obtener la lista de productos', async () => {
     const prods = await ProductoService.getProductos();
-    expect(prods.length).toBe(4);
+    expect(prods.length).toBe(4
+    );
   });
 
   it('Debe actualizar la imagen antigua de la torta de manjar guardada localmente', async () => {
