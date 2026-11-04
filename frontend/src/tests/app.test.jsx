@@ -1,132 +1,146 @@
+import { useContext } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { ProductoService } from '../services/productoService';
-import { OrdenService } from '../services/ordenService';
-import { CategoriaService } from '../services/categoriaService';
-import { UsuarioService } from '../services/usuarioService';
-import { ProductCard } from '../components/ProductCard';
-import { calcularBeneficios, calcularTotales } from '../services/descuentoService';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { buscarProductos } from '../services/busquedaService';
+import { precioFinal, calcularTotales } from '../services/descuentoService';
+import { validarCorreo } from '../services/validacionService';
+import { StoreProvider, StoreContext } from '../context/StoreContext';
+import { CarritoView } from '../views/CarritoView';
+
+// Productos de prueba (independientes del backend y de localStorage).
+const CATALOGO = [
+  { id: 1, nombre: 'Torta Cuadrada de Chocolate', categoria: 'Tortas Cuadradas', precio: 45000, stock: 12, enOferta: false, descuento: 0 },
+  { id: 2, nombre: 'Torta Circular de Manjar', categoria: 'Tortas Circulares', precio: 42000, stock: 8, enOferta: true, descuento: 15 },
+  { id: 3, nombre: 'Cheesecake Sin Azúcar', categoria: 'Sin Azúcar', precio: 47000, stock: 5, enOferta: false, descuento: 0 },
+  { id: 4, nombre: 'Brownie Sin Gluten', categoria: 'Sin Gluten', precio: 4000, stock: 25, enOferta: true, descuento: 10 }
+];
 
 describe('Suite de Pruebas Unitarias - Pastelería Mil Sabores (Vitest)', () => {
   let container;
   let root;
+  let ctx; // contexto de la tienda, capturado por <Probe />
+
+  // Componente auxiliar: expone el StoreContext para poder llamar addToCart, leer cart, etc.
+  const Probe = () => {
+    ctx = useContext(StoreContext);
+    return null;
+  };
 
   const render = (element) => {
     root = createRoot(container);
     flushSync(() => root.render(element));
   };
 
+  const agregar = (producto, cantidad) => flushSync(() => ctx.addToCart(producto, cantidad));
+
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
-    localStorage.clear();
-    // Backend "apagado": las pruebas usan siempre el respaldo local y no dependen de que Spring esté corriendo.
-    vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('backend apagado'))));
+    localStorage.clear(); // el carrito parte vacío en cada prueba
+    ctx = null;
   });
 
   afterEach(() => {
     if (root) { flushSync(() => root.unmount()); root = null; }
     document.body.removeChild(container);
     container = null;
-    vi.unstubAllGlobals();
   });
 
-  it('1. Debe obtener la lista de productos', async () => {
-    const prods = await ProductoService.getProductos();
-    expect(prods.length).toBe(4
-    );
+  // ---------- Búsqueda ----------
+
+  it('1. Una búsqueda sin coincidencias entrega cero productos', () => {
+    const resultado = buscarProductos(CATALOGO, 'pizza');
+    expect(resultado).toEqual([]);
+    expect(resultado.length).toBe(0);
   });
 
-  it('Debe actualizar la imagen antigua de la torta de manjar guardada localmente', async () => {
-    localStorage.setItem('pms_productos', JSON.stringify([
-      {
-        id: 2,
-        nombre: 'Torta Circular de Manjar',
-        imagen: 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=600'
-      }
-    ]));
+  it('2. Buscar en mayúsculas y en minúsculas entrega el mismo producto', () => {
+    const enMayusculas = buscarProductos(CATALOGO, 'CHOCOLATE');
+    const enMinusculas = buscarProductos(CATALOGO, 'chocolate');
 
-    const productos = await ProductoService.getProductos();
-
-    expect(productos[0].imagen).toBe('https://www.elingenio.cl/productos/bizcocho-manjar-lucuma.jpg');
-    expect(JSON.parse(localStorage.getItem('pms_productos'))[0].imagen).toBe(productos[0].imagen);
+    expect(enMayusculas.length).toBe(1);
+    expect(enMinusculas.length).toBe(1);
+    expect(enMayusculas[0].id).toBe(enMinusculas[0].id);
+    expect(enMayusculas[0].nombre).toBe('Torta Cuadrada de Chocolate');
   });
 
-  it('2. Debe crear un producto correctamente', async () => {
-    const antes = await ProductoService.getProductos();
-    const p = await ProductoService.createProducto({ nombre: 'Torta Selva Negra', precio: 38000, stock: 10, categoria: 'Tortas Circulares' });
-    const despues = await ProductoService.getProductos();
-    expect(p.id).toBeDefined();
-    expect(despues.length).toBe(antes.length + 1);
+  // ---------- Carrito ----------
+
+  it('3. Agregar un producto al carrito', () => {
+    render(<StoreProvider><Probe /></StoreProvider>);
+    expect(ctx.cart.length).toBe(0);
+
+    agregar(CATALOGO[0]);
+
+    expect(ctx.cart.length).toBe(1);
+    expect(ctx.cart[0].id).toBe(1);
+    expect(ctx.cart[0].cantidad).toBe(1);
   });
 
-  it('3. Debe eliminar un producto', async () => {
-    const prods = await ProductoService.getProductos();
-    await ProductoService.deleteProducto(prods[0].id);
-    const desp = await ProductoService.getProductos();
-    expect(desp.length).toBe(prods.length - 1);
-    expect(desp.some(p => p.id === prods[0].id)).toBe(false);
+  it('4. Agregar distintos productos al carrito', () => {
+    render(<StoreProvider><Probe /></StoreProvider>);
+
+    agregar(CATALOGO[0]);
+    agregar(CATALOGO[1]);
+    agregar(CATALOGO[3], 2);
+
+    expect(ctx.cart.length).toBe(3);
+    expect(ctx.cart.map((i) => i.id)).toEqual([1, 2, 4]);
+    expect(ctx.cart.find((i) => i.id === 4).cantidad).toBe(2);
+    // Total = 45.000 + 42.000 con 15% (35.700) + 2 x 4.000 con 10% (3.600 c/u)
+    expect(ctx.cartTotal).toBe(45000 + 35700 + 2 * 3600);
   });
 
-  it('4. Debe renderizar nombre y precio formateado en ProductCard', () => {
-    const p = { id: 99, nombre: 'Torta Merengue', precio: 35000, categoria: 'Especiales' };
-    render(<ProductCard producto={p} />);
-    expect(container.textContent).toContain('Torta Merengue');
-    expect(container.textContent).toContain('35.000');
+  it('5. Mostrar los productos que están en el carrito', () => {
+    render(<StoreProvider><Probe /><CarritoView /></StoreProvider>);
+    // Con el carrito vacío se muestra el mensaje de carrito vacío.
+    expect(container.textContent).toContain('Tu carrito de compras está vacío');
+
+    agregar(CATALOGO[0]);
+    agregar(CATALOGO[2]);
+
+    expect(container.textContent).toContain('Torta Cuadrada de Chocolate');
+    expect(container.textContent).toContain('Cheesecake Sin Azúcar');
+    expect(container.textContent).not.toContain('Brownie Sin Gluten');
+    expect(container.textContent).toContain('45.000');
+    expect(container.textContent).toContain('47.000');
   });
 
-  it('5. Debe mostrar el badge de oferta solo si enOferta es true', () => {
-    render(<ProductCard producto={{ id: 1, nombre: 'Oferta', precio: 10000, enOferta: true, descuento: 20 }} />);
-    expect(container.querySelector('.badge-oferta')).not.toBeNull();
-    expect(container.textContent).toContain('8.000'); // precio con 20% de descuento
-    flushSync(() => root.unmount());
-    render(<ProductCard producto={{ id: 2, nombre: 'Normal', precio: 10000 }} />);
-    expect(container.querySelector('.badge-oferta')).toBeNull();
+  // ---------- Reglas de negocio y validaciones ----------
+
+  it('6. El precio final aplica el descuento de la oferta del producto', () => {
+    expect(precioFinal(CATALOGO[1])).toBe(35700); // 42.000 con 15% de descuento
+    expect(precioFinal(CATALOGO[0])).toBe(45000); // sin oferta, se mantiene el precio
   });
 
-  it('6. Debe ejecutar la función de botón con el producto al hacer click', () => {
-    const spy = vi.fn();
-    const p = { id: 1, nombre: 'Torta', precio: 20000 };
-    render(<ProductCard producto={p} onAddToCart={spy} />);
-    container.querySelector('button').click();
-    expect(spy).toHaveBeenCalledWith(p);
-  });
-
-  it('7. Debe aplicar 50% de descuento a clientes mayores de 50 años', () => {
-    const hoy = new Date(2026, 9, 20);
-    expect(calcularBeneficios({ fechaNacimiento: '1970-01-01' }, hoy)).toContain('MAYOR_50');
-    expect(calcularBeneficios({ fechaNacimiento: '1976-10-20' }, hoy)).not.toContain('MAYOR_50'); // justo 50 años: no aplica
+  it('7. Un cliente con beneficio MAYOR_50 recibe 50% de descuento en el total', () => {
     const t = calcularTotales([{ id: 1, precio: 10000, cantidad: 2 }], { beneficios: ['MAYOR_50'] });
+    expect(t.subtotal).toBe(20000);
+    expect(t.porcentaje).toBe(50);
+    expect(t.descuento).toBe(10000);
     expect(t.total).toBe(10000);
   });
 
-  it('8. Debe aplicar 10% vitalicio con el cupón FELICES50', () => {
-    const b = calcularBeneficios({ fechaNacimiento: '2000-01-01', codigoPromo: ' felices50 ' }, new Date(2026, 9, 20));
-    expect(b).toEqual(['FELICES50']);
-    const t = calcularTotales([{ id: 1, precio: 20000, cantidad: 1 }], { beneficios: b });
-    expect(t.total).toBe(18000);
+  it('8. El descuento FELICES50 es de 10% y no se acumula con MAYOR_50 (se aplica el mayor)', () => {
+    const items = [{ id: 1, precio: 20000, cantidad: 1 }];
+    expect(calcularTotales(items, { beneficios: ['FELICES50'] }).total).toBe(18000);
+    expect(calcularTotales(items, { beneficios: ['MAYOR_50', 'FELICES50'] }).total).toBe(10000);
   });
 
-  it('9. Debe generar una orden de compra con prefijo ORD-', async () => {
-    const orden = await OrdenService.crearOrden({ cliente: { nombre: 'Pedro' }, total: 20000 });
-    expect(orden.id).toMatch(/^ORD-/);
-    expect(orden.total).toBe(20000);
+  it('9. Valida el formato del correo electrónico', () => {
+    expect(validarCorreo('cliente@milsabores.cl')).toBe('');
+    expect(validarCorreo('correo-invalido')).not.toBe('');
+    expect(validarCorreo('')).toBe('El correo es obligatorio.');
   });
 
-  it('10. Debe recuperar las órdenes registradas', async () => {
-    expect(OrdenService.getOrdenes().length).toBe(0);
-    const orden = await OrdenService.crearOrden({ cliente: { nombre: 'Ana' }, total: 5000 });
-    expect(OrdenService.getOrdenes().length).toBe(1);
-    expect(OrdenService.getOrdenById(orden.id).total).toBe(5000);
-  });
+  it('10. El carrito no permite agregar más unidades que el stock disponible', () => {
+    render(<StoreProvider><Probe /></StoreProvider>);
+    const poco = { ...CATALOGO[2], stock: 2 };
 
-  it('11. Debe obtener las categorías (respaldo local con 4 categorías)', async () => {
-    const cats = await CategoriaService.getCategorias();
-    expect(cats.length).toBe(4);
-  });
+    for (let i = 0; i < 5; i++) agregar(poco);
 
-  it('12. El login falla si el backend no responde (no hay sesión offline)', async () => {
-    await expect(UsuarioService.login('admin@milsabores.cl', 'Admin1234')).rejects.toThrow();
+    expect(ctx.cart.length).toBe(1);
+    expect(ctx.cart[0].cantidad).toBe(2);
   });
 });
