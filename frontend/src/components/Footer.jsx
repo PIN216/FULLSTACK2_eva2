@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * Pie de página general de la aplicación.
+ * Presenta información de derechos de autor y referencia de proyecto institucional.
+ */
 export const Footer = () => (
   <footer className="bg-dark text-light py-4 mt-auto">
     <div className="container text-center">
