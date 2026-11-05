@@ -36,9 +36,7 @@ describe('Suite de Pruebas Unitarias - Pastelería Mil Sabores (Vitest)', () => 
 
   beforeEach(() => {
     container = document.createElement('div');
-    document.body.appendChild(container);
-    localStorage.clear(); // el carrito parte vacío en cada prueba
-    ctx = null;
+    document.body.appendChild(container);    ctx = null;
   });
 
   afterEach(() => {

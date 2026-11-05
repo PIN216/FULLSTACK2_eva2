@@ -51,12 +51,6 @@ export const StoreProvider = ({ children }) => {
 
   // Última orden generada (para visualización de boleta tras compra)
   const [lastOrder, setLastOrder] = useState(null);
-
-  // Sincroniza el carrito en localStorage ante cada cambio
-  useEffect(() => {
-    localStorage.setItem('pms_cart', JSON.stringify(cart));
-  }, [cart]);
-
   /**
    * Obtiene el tope máximo de unidades disponibles en stock para no sobre-vender.
    */
