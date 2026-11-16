@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 550" width="100%" height="100%">
+  <rect width="950" height="550" fill="#f8f9fa"/>
+
+  <!-- Encabezado -->
+  <rect x="0" y="0" width="950" height="55" fill="#ffffff" stroke="#dee2e6" stroke-width="1"/>
+  <text x="30" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#78350f">🍰 Pastelería Mil Sabores - Mi Carrito</text>
+  <text x="750" y="35" font-family="Arial, sans-serif" font-size="13" fill="#198754">👤 Sesión: Juan Pérez (MAYOR_50)</text>
+
+  <text x="50" y="95" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#212529">Carrito de Compras</text>
+
+  <!-- Tabla de Carrito -->
+  <rect x="50" y="115" width="550" height="340" rx="8" fill="#ffffff" stroke="#dee2e6" stroke-width="1"/>
+
+  <rect x="50" y="115" width="550" height="40" rx="8" fill="#f1f3f5"/>
+  <text x="70" y="140" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#495057">Producto</text>
+  <text x="260" y="140" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#495057">Precio Oferta</text>
+  <text x="370" y="140" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#495057">Cantidad</text>
+  <text x="470" y="140" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#495057">Subtotal</text>
+
+  <!-- Item 1 -->
+  <text x="70" y="185" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#212529">Torta Circular de Manjar</text>
+  <text x="260" y="185" font-family="Arial, sans-serif" font-size="13" fill="#198754">$35.700</text>
+  <rect x="365" y="170" width="65" height="24" rx="4" fill="#f8f9fa" stroke="#ced4da" stroke-width="1"/>
+  <text x="393" y="186" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#212529">1</text>
+  <text x="470" y="185" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#212529">$35.700</text>
+
+  <line x1="50" y1="210" x2="600" y2="210" stroke="#e9ecef" stroke-width="1"/>
+
+  <!-- Item 2 -->
+  <text x="70" y="245" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#212529">Brownie Sin Gluten</text>
+  <text x="260" y="245" font-family="Arial, sans-serif" font-size="13" fill="#198754">$3.600</text>
+  <rect x="365" y="230" width="65" height="24" rx="4" fill="#f8f9fa" stroke="#ced4da" stroke-width="1"/>
+  <text x="393" y="246" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#212529">2</text>
+  <text x="470" y="245" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#212529">$7.200</text>
+
+  <line x1="50" y1="270" x2="600" y2="270" stroke="#e9ecef" stroke-width="1"/>
+
+  <!-- Item 3 -->
+  <text x="70" y="305" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#212529">Torta Cuadrada de Chocolate</text>
+  <text x="260" y="305" font-family="Arial, sans-serif" font-size="13" fill="#212529">$45.000</text>
+  <rect x="365" y="290" width="65" height="24" rx="4" fill="#f8f9fa" stroke="#ced4da" stroke-width="1"/>
+  <text x="393" y="306" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#212529">1</text>
+  <text x="470" y="305" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#212529">$45.000</text>
+
+  <!-- Card Resumen a la derecha -->
+  <rect x="630" y="115" width="270" height="340" rx="8" fill="#ffffff" stroke="#dee2e6" stroke-width="1"/>
+  <text x="650" y="145" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212529">Resumen del Pedido</text>
+
+  <text x="650" y="185" font-family="Arial, sans-serif" font-size="13" fill="#6c757d">Subtotal Productos:</text>
+  <text x="830" y="185" font-family="Arial, sans-serif" font-size="13" fill="#212529">$87.900</text>
+
+  <text x="650" y="215" font-family="Arial, sans-serif" font-size="13" fill="#198754">Ahorro por Ofertas:</text>
+  <text x="830" y="215" font-family="Arial, sans-serif" font-size="13" fill="#198754">-$7.100</text>
+
+  <!-- Beneficio Mayor de 50 años -->
+  <rect x="645" y="235" width="240" height="50" rx="6" fill="#d1e7dd" stroke="#a3cfbb" stroke-width="1"/>
+  <text x="655" y="255" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#0f5132">🎁 Beneficio Cliente Registrado</text>
+  <text x="655" y="272" font-family="Arial, sans-serif" font-size="11" fill="#0f5132">50% de Descuento (Mayor de 50 años)</text>
+
+  <text x="650" y="315" font-family="Arial, sans-serif" font-size="13" fill="#dc3545">Descuento Cliente (50%):</text>
+  <text x="820" y="315" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#dc3545">-$43.950</text>
+
+  <line x1="645" y1="335" x2="885" y2="335" stroke="#212529" stroke-width="1.5"/>
+
+  <text x="650" y="365" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212529">Total a Pagar:</text>
+  <text x="800" y="365" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#198754">$43.950</text>
+
+  <rect x="645" y="390" width="240" height="42" rx="6" fill="#198754"/>
+  <text x="765" y="416" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">Continuar al Pago (Boleta)</text>
+</svg>
+

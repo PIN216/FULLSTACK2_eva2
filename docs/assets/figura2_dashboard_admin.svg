@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%">
+  <!-- Fondo General -->
+  <rect width="1000" height="600" fill="#f4f6f9"/>
+
+  <!-- Barra Superior de Navegación del Navegador -->
+  <rect x="0" y="0" width="1000" height="40" fill="#212529"/>
+  <circle cx="20" cy="20" r="6" fill="#dc3545"/>
+  <circle cx="40" cy="20" r="6" fill="#ffc107"/>
+  <circle cx="60" cy="20" r="6" fill="#28a745"/>
+  <rect x="100" y="8" width="550" height="24" rx="4" fill="#343a40"/>
+  <text x="120" y="24" font-family="Arial, sans-serif" font-size="12" fill="#adb5bd">http://localhost:3000/admin/index.html (Tienda | Administrador)</text>
+
+  <!-- Sidebar Lateral Izquierdo -->
+  <rect x="0" y="40" width="220" height="560" fill="#ffffff" stroke="#dee2e6" stroke-width="1"/>
+  <text x="25" y="75" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#78350f">🍰 Mil Sabores</text>
+  <text x="25" y="92" font-family="Arial, sans-serif" font-size="11" fill="#6c757d">Panel Administrativo General</text>
+
+  <!-- Elementos del Menú Lateral -->
+  <!-- Dashboard Activo -->
+  <rect x="15" y="110" width="190" height="36" rx="6" fill="#0d6efd"/>
+  <text x="35" y="133" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">📊 Dashboard</text>
+
+  <text x="35" y="173" font-family="Arial, sans-serif" font-size="13" fill="#495057">📦 Órdenes</text>
+  <text x="35" y="213" font-family="Arial, sans-serif" font-size="13" fill="#495057">🎂 Productos</text>
+  <text x="35" y="253" font-family="Arial, sans-serif" font-size="13" fill="#495057">🏷️ Categorías</text>
+  <text x="35" y="293" font-family="Arial, sans-serif" font-size="13" fill="#495057">👥 Usuarios</text>
+  <text x="35" y="333" font-family="Arial, sans-serif" font-size="13" fill="#495057">📈 Reportes</text>
+
+  <line x1="15" y1="365" x2="205" y2="365" stroke="#e9ecef" stroke-width="1"/>
+
+  <text x="35" y="400" font-family="Arial, sans-serif" font-size="13" fill="#495057">👤 Perfil (Admin)</text>
+
+  <!-- Botones de Acción al pie de barra -->
+  <rect x="15" y="480" width="190" height="34" rx="6" fill="#212529"/>
+  <text x="80" y="502" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">🏪 Tienda</text>
+
+  <rect x="15" y="525" width="190" height="34" rx="6" fill="#dc3545"/>
+  <text x="65" y="547" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">🚪 Cerrar Sesión</text>
+
+  <!-- Contenido Central / Dashboard -->
+  <text x="250" y="80" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#212529">Dashboard</text>
+  <text x="250" y="102" font-family="Arial, sans-serif" font-size="13" fill="#6c757d">Resumen general de actividades y métricas clave de la tienda online</text>
+
+  <!-- 3 Tarjetas de Métricas Superiores -->
+  <!-- Tarjeta 1: Compras (Azul) -->
+  <rect x="250" y="125" width="225" height="100" rx="8" fill="#0d6efd"/>
+  <text x="270" y="155" font-family="Arial, sans-serif" font-size="14" fill="#ffffff">Compras / Boletas</text>
+  <text x="270" y="190" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#ffffff">1,234</text>
+  <text x="270" y="212" font-family="Arial, sans-serif" font-size="11" fill="#e0f2fe">Probabilidad de aumento: 20%</text>
+
+  <!-- Tarjeta 2: Productos (Verde) -->
+  <rect x="495" y="125" width="225" height="100" rx="8" fill="#198754"/>
+  <text x="515" y="155" font-family="Arial, sans-serif" font-size="14" fill="#ffffff">Productos en Catálogo</text>
+  <text x="515" y="190" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#ffffff">400</text>
+  <text x="515" y="212" font-family="Arial, sans-serif" font-size="11" fill="#d1e7dd">Inventario actual activo</text>
+
+  <!-- Tarjeta 3: Usuarios (Amarillo/Naranja) -->
+  <rect x="740" y="125" width="225" height="100" rx="8" fill="#ffc107"/>
+  <text x="760" y="155" font-family="Arial, sans-serif" font-size="14" fill="#212529">Usuarios Registrados</text>
+  <text x="760" y="190" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#212529">890</text>
+  <text x="760" y="212" font-family="Arial, sans-serif" font-size="11" fill="#495057">Nuevos usuarios este mes: 120</text>
+
+  <!-- Grilla de Módulos Operativos -->
+  <rect x="250" y="245" width="715" height="325" rx="8" fill="#ffffff" stroke="#dee2e6" stroke-width="1"/>
+
+  <!-- Fila 1 -->
+  <!-- Módulo Órdenes -->
+  <rect x="275" y="265" width="200" height="90" rx="6" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  <text x="290" y="295" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#0d6efd">🛒 Órdenes</text>
+  <text x="290" y="320" font-family="Arial, sans-serif" font-size="11" fill="#6c757d">Gestión y seguimiento de todas las órdenes de compra realizadas.</text>
+
+  <!-- Módulo Productos -->
+  <rect x="505" y="265" width="200" height="90" rx="6" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  <text x="520" y="295" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#198754">📦 Productos</text>
+  <text x="520" y="320" font-family="Arial, sans-serif" font-size="11" fill="#6c757d">Administrar inventario, precios y detalles de productos.</text>
+
+  <!-- Módulo Categorías -->
+  <rect x="735" y="265" width="200" height="90" rx="6" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  <text x="750" y="295" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#0dcaf0">🏷️ Categorías</text>
+  <text x="750" y="320" font-family="Arial, sans-serif" font-size="11" fill="#6c757d">Organizar productos en categorías para facilitar navegación.</text>
+
+  <!-- Fila 2 -->
+  <!-- Módulo Usuarios -->
+  <rect x="275" y="380" width="200" height="90" rx="6" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  <text x="290" y="410" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#6f42c1">👥 Usuarios</text>
+  <text x="290" y="435" font-family="Arial, sans-serif" font-size="11" fill="#6c757d">Gestión de cuentas y asignación de roles (Admin, Vendedor, Cliente).</text>
+
+  <!-- Módulo Reportes -->
+  <rect x="505" y="380" width="200" height="90" rx="6" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  <text x="520" y="410" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#fd7e14">📊 Reportes</text>
+  <text x="520" y="435" font-family="Arial, sans-serif" font-size="11" fill="#6c757d">Generación de informes detallados sobre operaciones y ventas.</text>
+
+  <!-- Módulo Perfil -->
+  <rect x="735" y="380" width="200" height="90" rx="6" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1"/>
+  <text x="750" y="410" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#20c997">⚙️ Configuración</text>
+  <text x="750" y="435" font-family="Arial, sans-serif" font-size="11" fill="#6c757d">Administración de credenciales de seguridad y parámetros JWT.</text>
+
+  <rect x="275" y="495" width="660" height="55" rx="6" fill="#e7f1ff" stroke="#b6d4fe" stroke-width="1"/>
+  <text x="295" y="527" font-family="Arial, sans-serif" font-size="12" fill="#084298">
+    <strong>Estado del Sistema:</strong> Conexión activa a MySQL (milsaboresbd) | API REST v1 operativa | Seguridad JWT activa
+  </text>
+</svg>
+

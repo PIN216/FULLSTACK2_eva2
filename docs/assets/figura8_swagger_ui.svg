@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%">
+  <rect width="1000" height="600" fill="#fafafa"/>
+
+  <!-- Barra Superior de Swagger -->
+  <rect x="0" y="0" width="1000" height="50" fill="#1b1b1b"/>
+  <text x="30" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#89bf04">swagger</text>
+  <rect x="680" y="12" width="280" height="26" rx="4" fill="#3b4151"/>
+  <text x="690" y="29" font-family="Arial, sans-serif" font-size="11" fill="#ffffff">http://localhost:9091/v3/api-docs</text>
+
+  <!-- Header de la API -->
+  <text x="50" y="90" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="#3b4151">Pastelería Mil Sabores - API RESTful v1</text>
+  <rect x="540" y="70" width="60" height="24" rx="12" fill="#7d8492"/>
+  <text x="555" y="86" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">1.0.0</text>
+  <rect x="610" y="70" width="60" height="24" rx="12" fill="#49cc90"/>
+  <text x="625" y="86" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">OAS 3.0</text>
+
+  <!-- Botón Authorize -->
+  <rect x="850" y="70" width="100" height="32" rx="4" fill="none" stroke="#49cc90" stroke-width="2"/>
+  <text x="865" y="91" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#49cc90">Authorize 🔓</text>
+
+  <text x="50" y="120" font-family="Arial, sans-serif" font-size="13" fill="#3b4151">
+    Servicios REST para integración Fullstack. Control de acceso con roles (Admin, Vendedor, Cliente) y tokens JWT.
+  </text>
+  <text x="50" y="140" font-family="Arial, sans-serif" font-size="12" fill="#3b4151">
+    <strong>Servidor Base:</strong> <code>http://localhost:9091</code> - Servidor de Desarrollo Local
+  </text>
+
+  <!-- Endpoints List -->
+  <!-- Tag 1: Auth -->
+  <text x="50" y="180" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#3b4151">1. Autenticación y Seguridad</text>
+
+  <rect x="50" y="195" width="900" height="36" rx="4" fill="#e8f6f0" stroke="#49cc90" stroke-width="1"/>
+  <rect x="60" y="201" width="60" height="24" rx="3" fill="#49cc90"/>
+  <text x="75" y="217" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">POST</text>
+  <text x="135" y="218" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#3b4151">/api/v1/auth/login</text>
+  <text x="400" y="218" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">Inicio de sesión y entrega de token JWT (Público)</text>
+
+  <rect x="50" y="238" width="900" height="36" rx="4" fill="#e8f6f0" stroke="#49cc90" stroke-width="1"/>
+  <rect x="60" y="244" width="60" height="24" rx="3" fill="#49cc90"/>
+  <text x="75" y="260" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">POST</text>
+  <text x="135" y="261" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#3b4151">/api/v1/auth/registro</text>
+  <text x="400" y="261" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">Registro de cliente con beneficios por edad y cupón</text>
+
+  <!-- Tag 2: Catálogo de Productos -->
+  <text x="50" y="300" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#3b4151">3. Catálogo de Productos</text>
+
+  <rect x="50" y="315" width="900" height="36" rx="4" fill="#ebf3fb" stroke="#61affe" stroke-width="1"/>
+  <rect x="60" y="321" width="60" height="24" rx="3" fill="#61affe"/>
+  <text x="78" y="337" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">GET</text>
+  <text x="135" y="338" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#3b4151">/api/v1/productos</text>
+  <text x="400" y="338" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">Listar todos los productos (Público / Vendedor / Admin)</text>
+
+  <rect x="50" y="358" width="900" height="36" rx="4" fill="#e8f6f0" stroke="#49cc90" stroke-width="1"/>
+  <rect x="60" y="364" width="60" height="24" rx="3" fill="#49cc90"/>
+  <text x="75" y="380" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">POST</text>
+  <text x="135" y="381" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#3b4151">/api/v1/productos</text>
+  <text x="400" y="381" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">Crear nuevo producto (Requiere ROLE_ADMINISTRADOR) 🔒</text>
+
+  <rect x="50" y="401" width="900" height="36" rx="4" fill="#fcf7ee" stroke="#fca130" stroke-width="1"/>
+  <rect x="60" y="407" width="60" height="24" rx="3" fill="#fca130"/>
+  <text x="78" y="423" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">PUT</text>
+  <text x="135" y="424" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#3b4151">/api/v1/productos/{id}</text>
+  <text x="400" y="424" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">Actualizar producto existente (Requiere ROLE_ADMINISTRADOR) 🔒</text>
+
+  <rect x="50" y="444" width="900" height="36" rx="4" fill="#fae7e7" stroke="#f93e3e" stroke-width="1"/>
+  <rect x="60" y="450" width="60" height="24" rx="3" fill="#f93e3e"/>
+  <text x="70" y="466" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">DELETE</text>
+  <text x="135" y="467" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#3b4151">/api/v1/productos/{id}</text>
+  <text x="400" y="467" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">Eliminar producto (Requiere ROLE_ADMINISTRADOR) 🔒</text>
+
+  <!-- Tag 3: Órdenes y Boletas -->
+  <text x="50" y="510" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#3b4151">5. Órdenes y Boletas de Compra</text>
+
+  <rect x="50" y="525" width="900" height="36" rx="4" fill="#ebf3fb" stroke="#61affe" stroke-width="1"/>
+  <rect x="60" y="531" width="60" height="24" rx="3" fill="#61affe"/>
+  <text x="78" y="547" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff">GET</text>
+  <text x="135" y="548" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#3b4151">/api/v1/ordenes</text>
+  <text x="400" y="548" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">Listar todas las órdenes (Permitido ROLE_ADMINISTRADOR y ROLE_VENDEDOR) 🔒</text>
+</svg>
+

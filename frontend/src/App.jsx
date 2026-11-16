@@ -18,6 +18,7 @@ import { LoginView } from './views/LoginView';
 import { RegistroView } from './views/RegistroView';
 import { DashboardView } from './views/admin/DashboardView';
 import AdminDashboard from './components/pages/AdminDashboard';
+import { VendedorView } from './views/vendedor/VendedorView';
 
 const MainRouter = () => {
   const { currentView } = useContext(StoreContext);
@@ -40,6 +41,7 @@ const MainRouter = () => {
       case 'registro': return <RegistroView />;
       case 'admin_dashboard': return <DashboardView />;
       case 'admin_panel': return <AdminDashboard />;
+      case 'vendedor_panel': return <VendedorView />;
       default: return <Home />;
     }
   };
