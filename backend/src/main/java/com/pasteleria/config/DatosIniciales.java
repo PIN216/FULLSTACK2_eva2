@@ -2,20 +2,32 @@ package com.pasteleria.config;
 
 import com.pasteleria.model.Categoria;
 import com.pasteleria.model.Producto;
+import com.pasteleria.model.Usuario;
 import com.pasteleria.repository.CategoriaRepository;
 import com.pasteleria.repository.ProductoRepository;
+import com.pasteleria.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class DatosIniciales implements CommandLineRunner {
 
     private final ProductoRepository productos;
     private final CategoriaRepository categorias;
+    private final UsuarioRepository usuarios;
+    private final PasswordEncoder passwordEncoder;
 
-    public DatosIniciales(ProductoRepository productos, CategoriaRepository categorias) {
+    public DatosIniciales(ProductoRepository productos,
+                          CategoriaRepository categorias,
+                          UsuarioRepository usuarios,
+                          PasswordEncoder passwordEncoder) {
         this.productos = productos;
         this.categorias = categorias;
+        this.usuarios = usuarios;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -39,6 +51,37 @@ public class DatosIniciales implements CommandLineRunner {
             productos.save(prod("Brownie Sin Gluten", "Sin Gluten", 4000.0, 25, true, 10.0,
                 "Rico y denso chocolate amargo, apto para celíacos sin sacrificar sabor.",
                 "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600"));
+        }
+        if (usuarios.count() == 0) {
+            // Usuario Administrador
+            Usuario admin = new Usuario();
+            admin.setNombre("Administrador Mil Sabores");
+            admin.setCorreo("admin@milsabores.cl");
+            admin.setPassword(passwordEncoder.encode("Admin123!"));
+            admin.setRol("ADMINISTRADOR");
+            admin.setFechaNacimiento("1985-05-20");
+            admin.setBeneficios(List.of("ADMIN"));
+            usuarios.save(admin);
+
+            // Usuario Vendedor
+            Usuario vendedor = new Usuario();
+            vendedor.setNombre("Vendedor Mil Sabores");
+            vendedor.setCorreo("vendedor@milsabores.cl");
+            vendedor.setPassword(passwordEncoder.encode("Vendedor123!"));
+            vendedor.setRol("VENDEDOR");
+            vendedor.setFechaNacimiento("1992-08-15");
+            vendedor.setBeneficios(List.of("VENTAS"));
+            usuarios.save(vendedor);
+
+            // Usuario Cliente
+            Usuario cliente = new Usuario();
+            cliente.setNombre("Cliente Prueba");
+            cliente.setCorreo("cliente@milsabores.cl");
+            cliente.setPassword(passwordEncoder.encode("Cliente123!"));
+            cliente.setRol("CLIENTE");
+            cliente.setFechaNacimiento("1970-01-10");
+            cliente.setBeneficios(List.of("FELICES50", "MAYOR_50"));
+            usuarios.save(cliente);
         }
     }
 

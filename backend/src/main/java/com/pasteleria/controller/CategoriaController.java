@@ -13,7 +13,7 @@ import java.util.List;
  * Ruta base: /api/categorias
  */
 @RestController
-@RequestMapping("/api/categorias")
+@RequestMapping({"/api/v1/categorias", "/api/categorias"})
 public class CategoriaController {
 
     private final CategoriaRepository repo;

@@ -14,7 +14,7 @@ import java.util.List;
  * Ruta base: /api/productos
  */
 @RestController
-@RequestMapping("/api/productos")
+@RequestMapping({"/api/v1/productos", "/api/productos"})
 public class ProductoController {
 
     private final ProductoRepository repo;

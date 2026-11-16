@@ -25,7 +25,13 @@ Levanta primero el backend y luego el frontend (en dos terminales).
 ### Backend (http://localhost:9091)
 ```bash
 cd backend
-mvn spring-boot:run
+.\mvnw.cmd spring-boot:run
+
+  
+
+  
+
+  
 ```
 - Al arrancar, `Data` inserta en la base SQL los datos iniciales: 4 categorías, 4 productos y el usuario administrador (con la contraseña cifrada con BCrypt). Si la tabla ya tiene datos, no los duplica.
 - Endpoints: `/api/productos`, `/api/categorias`, `/api/usuarios` (`/registro` y `/login`) y `/api/ordenes`.

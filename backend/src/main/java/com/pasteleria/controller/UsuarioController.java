@@ -20,7 +20,7 @@ import java.util.List;
  * Ruta base: /api/usuarios
  */
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping({"/api/v1/usuarios", "/api/usuarios"})
 public class UsuarioController {
 
     /** Código promocional que otorga 10% de descuento vitalicio al cliente */

@@ -14,7 +14,7 @@ import java.util.List;
  * Ruta base: /api/ordenes
  */
 @RestController
-@RequestMapping("/api/ordenes")
+@RequestMapping({"/api/v1/ordenes", "/api/ordenes"})
 public class OrdenController {
 
     private final OrdenRepository repo;
