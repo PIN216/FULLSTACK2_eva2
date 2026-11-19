@@ -69,15 +69,23 @@ const guardarOrdenLocal = (orden) => {
   return orden;
 };
 
-// ---------- Cliente HTTP ----------
+// ---------- Cliente HTTP con soporte para JWT ----------
 const request = async (ruta, opciones = {}) => {
+  const token = localStorage.getItem('pms_token');
+  const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+
   const res = await fetch(`${API_URL}${ruta}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders,
+      ...(opciones.headers || {})
+    },
     ...opciones
   });
+
   if (!res.ok) {
     const err = new Error(`HTTP ${res.status}`);
-    err.status = res.status; // el servidor respondió con un error (409, 401, 404...)
+    err.status = res.status; // el servidor respondió con un error (409, 401, 403, 404...)
     throw err;
   }
   return res.status === 204 ? null : res.json();
@@ -167,7 +175,7 @@ export const ApiService = {
     }
   },
 
-  // ----- Usuarios (requieren backend: la contraseña se valida y cifra en el servidor) -----
+  // ----- Usuarios y Autenticación con JWT -----
   getUsuarios: async () => {
     try {
       return await request('/usuarios');
@@ -176,13 +184,51 @@ export const ApiService = {
     }
   },
 
-  registrarUsuario: async (datos) =>
-    request('/usuarios/registro', { method: 'POST', body: JSON.stringify(datos) }),
+  registrarUsuario: async (datos) => {
+    try {
+      // Intentar endpoint v1 con soporte de token JWT
+      const res = await request('/v1/auth/registro', { method: 'POST', body: JSON.stringify(datos) });
+      if (res && res.token) {
+        localStorage.setItem('pms_token', res.token);
+        return { ...(res.usuario || {}), token: res.token };
+      }
+      return res;
+    } catch (err) {
+      if (err.status === 404) {
+        return request('/usuarios/registro', { method: 'POST', body: JSON.stringify(datos) });
+      }
+      throw err;
+    }
+  },
 
-  login: async (correo, password) =>
-    request('/usuarios/login', { method: 'POST', body: JSON.stringify({ correo, password }) }),
+  login: async (correo, password) => {
+    try {
+      // Intentar endpoint v1 con firma y emisión de token JWT
+      const res = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ correo, password }) });
+      if (res && res.token) {
+        localStorage.setItem('pms_token', res.token);
+        return { ...(res.usuario || {}), token: res.token };
+      }
+      return res;
+    } catch (err) {
+      if (err.status === 404) {
+        const res = await request('/usuarios/login', { method: 'POST', body: JSON.stringify({ correo, password }) });
+        return res;
+      }
+      throw err;
+    }
+  },
 
-  // ----- Órdenes -----
+  // ----- Órdenes / Boletas -----
+  getOrdenes: async () => {
+    try {
+      const ords = await request('/ordenes');
+      return (ords || []).map(ordenDesdeBackend);
+    } catch {
+      return leer(LS_ORDENES) || [];
+    }
+  },
+
   crearOrden: async (orden) => {
     const payload = {
       clienteNombre: orden.cliente?.nombre ?? '',
