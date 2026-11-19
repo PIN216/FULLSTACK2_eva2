@@ -2,6 +2,9 @@ package com.pasteleria.controller;
 
 import com.pasteleria.model.Usuario;
 import com.pasteleria.repository.UsuarioRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controlador REST para la autenticación y registro de usuarios.
+ * Controlador REST para la administración y consulta de usuarios.
  * Maneja el ciclo de vida de clientes, encriptación de contraseñas con BCrypt
  * y asignación de beneficios comerciales (promociones por edad y cupones).
- * Ruta base: /api/usuarios
+ * Rutas: /api/v1/usuarios y /api/usuarios
  */
+@Tag(name = "5. Gestión de Usuarios", description = "Endpoints para consulta de usuarios del sistema y operaciones de compatibilidad.")
 @RestController
 @RequestMapping({"/api/v1/usuarios", "/api/usuarios"})
 public class UsuarioController {
@@ -45,6 +49,9 @@ public class UsuarioController {
      * Nota de seguridad: La contraseña nunca se incluye en las respuestas JSON gracias a @JsonProperty(WRITE_ONLY).
      * @return Lista de usuarios.
      */
+    @Operation(summary = "Listar usuarios", description = "Retorna la lista de usuarios registrados sin exponer credenciales. Requiere rol ADMINISTRADOR.")
+    @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida")
+    @ApiResponse(responseCode = "403", description = "Acceso denegado (requiere rol ADMINISTRADOR)")
     @GetMapping
     public List<Usuario> listar() {
         return repo.findAll();
@@ -59,6 +66,10 @@ public class UsuarioController {
      * @return Usuario creado y persistido (sin contraseña expuesta).
      * @throws ResponseStatusException HTTP 400 si faltan datos o son inválidos, HTTP 409 si el correo ya existe.
      */
+    @Operation(summary = "Registro de usuario (endpoint directo)", description = "Registra un cliente nuevo y calcula beneficios de descuento según edad y cupón.")
+    @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente")
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
+    @ApiResponse(responseCode = "409", description = "Correo ya en uso")
     @PostMapping("/registro")
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario registrar(@RequestBody RegistroRequest r) {
@@ -112,6 +123,9 @@ public class UsuarioController {
      * @return El perfil del usuario autenticado si las credenciales coinciden.
      * @throws ResponseStatusException HTTP 401 si las credenciales son inválidas.
      */
+    @Operation(summary = "Inicio de sesión (endpoint directo)", description = "Autentica al usuario verificando su contraseña cifrada con BCrypt.")
+    @ApiResponse(responseCode = "200", description = "Credenciales válidas")
+    @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
     @PostMapping("/login")
     public Usuario login(@RequestBody LoginRequest r) {
         Usuario u = (vacio(r.correo()) || r.password() == null)
