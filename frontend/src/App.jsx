@@ -16,33 +16,95 @@ import { PagoErrorView } from './views/PagoErrorView';
 import { OfertasView } from './views/OfertasView';
 import { LoginView } from './views/LoginView';
 import { RegistroView } from './views/RegistroView';
-import { DashboardView } from './views/admin/DashboardView';
-import AdminDashboard from './components/pages/AdminDashboard';
+import AdminDashboard from './views/admin/AdminDashboard';
 import { VendedorView } from './views/vendedor/VendedorView';
 
+/**
+ * Enrutador principal del SPA con protección de rutas por roles.
+ * Controla el acceso exclusivo para Administrador (Admin Dashboard)
+ * y Vendedor (VendedorView), redirigiendo o bloqueando a usuarios no autorizados.
+ */
 const MainRouter = () => {
-  const { currentView } = useContext(StoreContext);
+  const { currentView, isAdmin, isVendedor, setCurrentView } = useContext(StoreContext);
 
   const renderView = () => {
     switch (currentView) {
-      case 'home': return <Home />;
-      case 'categorias': return <Categorias />;
-      case 'blogs': return <BlogsView />;
-      case 'detalle_blog': return <DetalleBlog />;
-      case 'nosotros': return <NosotrosView />;
-      case 'contacto': return <ContactoView />;
-      case 'detalle_producto': return <DetalleProducto />;
-      case 'carrito': return <CarritoView />;
-      case 'checkout': return <CheckoutView />;
-      case 'pago_exito': return <PagoExitoView />;
-      case 'pago_error': return <PagoErrorView />;
-      case 'ofertas': return <OfertasView />;
-      case 'login': return <LoginView />;
-      case 'registro': return <RegistroView />;
-      case 'admin_dashboard': return <DashboardView />;
-      case 'admin_panel': return <AdminDashboard />;
-      case 'vendedor_panel': return <VendedorView />;
-      default: return <Home />;
+      case 'home':
+        return <Home />;
+      case 'categorias':
+        return <Categorias />;
+      case 'blogs':
+        return <BlogsView />;
+      case 'detalle_blog':
+        return <DetalleBlog />;
+      case 'nosotros':
+        return <NosotrosView />;
+      case 'contacto':
+        return <ContactoView />;
+      case 'detalle_producto':
+        return <DetalleProducto />;
+      case 'carrito':
+        return <CarritoView />;
+      case 'checkout':
+        return <CheckoutView />;
+      case 'pago_exito':
+        return <PagoExitoView />;
+      case 'pago_error':
+        return <PagoErrorView />;
+      case 'ofertas':
+        return <OfertasView />;
+      case 'login':
+        return <LoginView />;
+      case 'registro':
+        return <RegistroView />;
+
+      // Paneles restringidos a Administrador
+      case 'admin_dashboard':
+      case 'admin_panel':
+        if (!isAdmin) {
+          return (
+            <div className="container py-5 text-center">
+              <div className="card shadow-sm p-5 border-0 mx-auto" style={{ maxWidth: '550px' }}>
+                <div className="text-danger fs-1 mb-2">🔒</div>
+                <h3 className="fw-bold text-danger mb-3">Acceso Restringido</h3>
+                <p className="text-muted">
+                  El panel de administración requiere una cuenta con rol <strong>Administrador</strong>.
+                </p>
+                <div className="mt-3">
+                  <button className="btn btn-primary" onClick={() => setCurrentView('home')}>
+                    Volver a la Tienda
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+        return <AdminDashboard />;
+
+      // Panel restringido a Vendedor (y Administrador)
+      case 'vendedor_panel':
+        if (!isVendedor && !isAdmin) {
+          return (
+            <div className="container py-5 text-center">
+              <div className="card shadow-sm p-5 border-0 mx-auto" style={{ maxWidth: '550px' }}>
+                <div className="text-warning fs-1 mb-2">🔒</div>
+                <h3 className="fw-bold text-brown mb-3">Acceso Restringido</h3>
+                <p className="text-muted">
+                  El panel de ventas requiere una cuenta con rol <strong>Vendedor</strong> o <strong>Administrador</strong>.
+                </p>
+                <div className="mt-3">
+                  <button className="btn btn-primary" onClick={() => setCurrentView('home')}>
+                    Volver a la Tienda
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+        return <VendedorView />;
+
+      default:
+        return <Home />;
     }
   };
 

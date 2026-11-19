@@ -4,13 +4,18 @@ import { StoreContext } from '../context/StoreContext';
 /**
  * Barra de navegación principal de la aplicación.
  * Permite cambiar de vista en el SPA, ver el estado del carrito,
- * acceder al panel administrativo si el rol es 'admin' y gestionar la sesión.
+ * acceder a los paneles restringidos por rol (Admin Panel para administradores
+ * y Panel Vendedor para vendedores) y gestionar la sesión.
  */
 export const Navbar = () => {
-  const { currentView, setCurrentView, cart, cartTotal, currentUser, logout } = useContext(StoreContext);
+  const { currentView, setCurrentView, cart, cartTotal, currentUser, logout, isAdmin, isVendedor } = useContext(StoreContext);
 
   // Cantidad acumulada de artículos en el carrito
   const totalItems = cart.reduce((acc, i) => acc + i.cantidad, 0);
+
+  // Rol legible para la etiqueta de usuario
+  const rolEtiqueta = isAdmin ? 'Admin' : isVendedor ? 'Vendedor' : 'Cliente';
+  const rolBadgeClass = isAdmin ? 'bg-danger' : isVendedor ? 'bg-warning text-dark' : 'bg-secondary';
 
   return (
     <header className="sticky-top">
@@ -63,11 +68,26 @@ export const Navbar = () => {
                 </button>
               </li>
 
-              {/* Acceso exclusivo a panel de control para administradores */}
-              {currentUser?.rol === 'admin' && (
+              {/* Acceso exclusivo a panel de control para Administrador */}
+              {isAdmin && (
                 <li className="nav-item">
-                  <button className={`nav-link btn btn-link text-danger fw-bold ${currentView.startsWith('admin') ? 'active' : ''}`} onClick={() => setCurrentView('admin_dashboard')}>
-                    Admin Panel
+                  <button
+                    className={`nav-link btn btn-link text-danger fw-bold ${currentView.startsWith('admin') ? 'active' : ''}`}
+                    onClick={() => setCurrentView('admin_dashboard')}
+                  >
+                    <i className="bi bi-shield-lock me-1"></i> Admin Panel
+                  </button>
+                </li>
+              )}
+
+              {/* Acceso exclusivo a panel de control para Vendedor */}
+              {isVendedor && (
+                <li className="nav-item">
+                  <button
+                    className={`nav-link btn btn-link text-primary fw-bold ${currentView === 'vendedor_panel' ? 'active' : ''}`}
+                    onClick={() => setCurrentView('vendedor_panel')}
+                  >
+                    <i className="bi bi-person-badge me-1"></i> Panel Vendedor
                   </button>
                 </li>
               )}
@@ -82,8 +102,15 @@ export const Navbar = () => {
 
               {currentUser ? (
                 <div className="d-flex align-items-center gap-2">
-                  <span className="fw-bold text-brown">👤 {currentUser.nombre}</span>
-                  <button className="btn btn-sm btn-outline-danger" onClick={logout}>Salir</button>
+                  <div className="d-flex flex-column text-end">
+                    <span className="fw-bold text-brown" style={{ fontSize: '0.9rem' }}>
+                      👤 {currentUser.nombre}
+                    </span>
+                    <span className={`badge ${rolBadgeClass} align-self-end`} style={{ fontSize: '0.7rem' }}>
+                      {rolEtiqueta}
+                    </span>
+                  </div>
+                  <button className="btn btn-sm btn-outline-danger ms-1" onClick={logout}>Salir</button>
                 </div>
               ) : (
                 <div className="d-flex gap-2">
