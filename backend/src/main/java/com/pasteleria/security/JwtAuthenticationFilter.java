@@ -16,7 +16,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -48,16 +49,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String rolToken = tokenProvider.obtenerRolDeToken(token);
 
             Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreoIgnoreCase(correo);
-            String rolFinal = usuarioOpt.map(Usuario::getRol).orElse(rolToken);
+            String rolCrudo = usuarioOpt.map(Usuario::getRol).orElse(rolToken);
 
-            // Se asignan las autoridades correspondientes (ROLE_ADMINISTRADOR, ROLE_VENDEDOR, ROLE_CLIENTE)
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + rolFinal);
+            String rolNormalizado = (rolCrudo != null ? rolCrudo.toUpperCase().trim().replace("ROLE_", "") : "CLIENTE");
+            if ("ADMIN".equals(rolNormalizado)) {
+                rolNormalizado = "ADMINISTRADOR";
+            }
+
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + rolNormalizado));
+            if ("ADMINISTRADOR".equals(rolNormalizado)) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            }
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             usuarioOpt.orElse(null),
                             null,
-                            Collections.singletonList(authority)
+                            authorities
                     );
 
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -75,4 +84,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 }
-
