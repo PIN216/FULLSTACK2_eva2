@@ -4,7 +4,7 @@ import { calcularTotales } from '../services/descuentoService';
 /**
  * Contexto global de la aplicación (Pastelería Mil Sabores).
  * Provee estado centralizado para navegación entre vistas, gestión del carrito,
- * sesión de usuario autenticado y totales con descuentos aplicados.
+ * sesión de usuario autenticado con JWT y totales con descuentos aplicados.
  */
 export const StoreContext = createContext();
 
@@ -51,6 +51,12 @@ export const StoreProvider = ({ children }) => {
 
   // Última orden generada (para visualización de boleta tras compra)
   const [lastOrder, setLastOrder] = useState(null);
+
+  // Sincroniza el carrito en localStorage ante cada cambio
+  useEffect(() => {
+    localStorage.setItem('pms_cart', JSON.stringify(cart));
+  }, [cart]);
+
   /**
    * Obtiene el tope máximo de unidades disponibles en stock para no sobre-vender.
    */
@@ -105,27 +111,37 @@ export const StoreProvider = ({ children }) => {
   const clearCart = () => setCart([]);
 
   /**
-   * Inicia sesión del usuario y persiste los datos seguros en la sesión local.
+   * Inicia sesión del usuario, almacena el token JWT y persiste los datos seguros.
    * @param {Object} user - Datos del usuario autenticado.
    */
   const login = (user) => {
+    if (user && user.token) {
+      localStorage.setItem('pms_token', user.token);
+    }
     const seguro = sinPassword(user);
     setCurrentUser(seguro);
     localStorage.setItem('pms_session', JSON.stringify(seguro));
   };
 
   /**
-   * Cierra la sesión activa y redirige al inicio de la aplicación.
+   * Cierra la sesión activa, revoca tokens locales y redirige al inicio de la aplicación.
    */
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('pms_session');
+    localStorage.removeItem('pms_token');
     setCurrentView('home');
   };
 
   // Cálculo memorizado de totales con ofertas por producto y descuentos de usuario
   const cartResumen = useMemo(() => calcularTotales(cart, currentUser), [cart, currentUser]);
   const cartTotal = cartResumen.total;
+
+  // Verificación de roles normalizados según requerimientos de evaluación 3:
+  const userRol = (currentUser?.rol || '').toUpperCase().trim();
+  const isAdmin = userRol === 'ADMIN' || userRol === 'ADMINISTRADOR';
+  const isVendedor = userRol === 'VENDEDOR';
+  const isCliente = !isAdmin && !isVendedor;
 
   return (
     <StoreContext.Provider value={{
@@ -134,7 +150,8 @@ export const StoreProvider = ({ children }) => {
       selectedBlogId, setSelectedBlogId,
       cart, addToCart, updateQuantity, removeFromCart, clearCart, cartTotal, cartResumen,
       currentUser, login, logout,
-      lastOrder, setLastOrder
+      lastOrder, setLastOrder,
+      isAdmin, isVendedor, isCliente
     }}>
       {children}
     </StoreContext.Provider>

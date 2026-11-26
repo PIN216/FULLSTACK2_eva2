@@ -1,8 +1,6 @@
 -- ====================================================================
 -- Script SQL de inicialización para Pastelería Mil Sabores
--- Ubicación: backend/src/main/resources/Data.sql
--- Inserta datos iniciales para la base de datos MySQL.
+-- NOTA: Este archivo ya no es necesario ya que DatosIniciales.java
+-- maneja la siembra idempotente de datos al arrancar la aplicación.
+-- Se mantiene vacío para compatibilidad con spring.sql.init.mode=never
 -- ====================================================================
-
--- Usuario Administrador secundario/respaldo
-insert into usuarios values ('2', 'admin2@milsabores.cl', NULL, 'Administrador General', '$2a$10$Nt6K.xGl4bnEVZiPbzvznecfHwcQog/FlFo06Vl03V7p1CHONVHyO', 'admin');

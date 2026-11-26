@@ -20,9 +20,12 @@ import java.util.Collections;
 import java.util.Optional;
 
 /**
- * Filtro de seguridad que intercepta cada petición HTTP entrante para extraer
- * y validar el token JWT presente en la cabecera 'Authorization: Bearer <token>'.
- * Establece el contexto de seguridad de Spring Security para el ciclo de vida del request.
+ * Filtro JWT que intercepta cada petición HTTP entrante para extraer y validar
+ * el token Bearer de la cabecera Authorization.
+ *
+ * SEGURIDAD: El rol se lee SIEMPRE desde la base de datos para evitar que un
+ * atacante genere un token con un rol elevado aunque conozca el secret.
+ * El token solo prueba la identidad (correo); el rol lo otorga la BD.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -45,23 +48,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(token) && tokenProvider.validarToken(token)) {
             String correo = tokenProvider.obtenerCorreoDeToken(token);
-            String rolToken = tokenProvider.obtenerRolDeToken(token);
 
+            // ── Rol desde BD (fuente de verdad), NO desde el token ──────────────
             Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreoIgnoreCase(correo);
-            String rolFinal = usuarioOpt.map(Usuario::getRol).orElse(rolToken);
 
-            // Se asignan las autoridades correspondientes (ROLE_ADMINISTRADOR, ROLE_VENDEDOR, ROLE_CLIENTE)
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + rolFinal);
+            if (usuarioOpt.isPresent()) {
+                Usuario usuario = usuarioOpt.get();
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            usuarioOpt.orElse(null),
-                            null,
-                            Collections.singletonList(authority)
-                    );
+                // normalizarRol garantiza ADMINISTRADOR | VENDEDOR | CLIENTE
+                String rolNormalizado = Usuario.normalizarRol(usuario.getRol());
 
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                // Spring Security espera el prefijo ROLE_
+                SimpleGrantedAuthority authority =
+                        new SimpleGrantedAuthority("ROLE_" + rolNormalizado);
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                usuario, null, Collections.singletonList(authority));
+
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            // Si el usuario no existe en BD el token es descartado aunque sea válido
         }
 
         filterChain.doFilter(request, response);
@@ -70,9 +80,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String extraerTokenDePeticion(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+            return bearerToken.substring(7).trim();
         }
         return null;
     }
 }
-

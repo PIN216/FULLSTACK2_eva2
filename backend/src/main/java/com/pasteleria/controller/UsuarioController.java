@@ -2,6 +2,10 @@ package com.pasteleria.controller;
 
 import com.pasteleria.model.Usuario;
 import com.pasteleria.repository.UsuarioRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -14,22 +18,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controlador REST para la autenticación y registro de usuarios.
- * Maneja el ciclo de vida de clientes, encriptación de contraseñas con BCrypt
- * y asignación de beneficios comerciales (promociones por edad y cupones).
- * Ruta base: /api/usuarios
+ * Controlador REST para administración de usuarios.
+ * Rutas: /api/v1/usuarios y /api/usuarios
+ *
+ * SEGURIDAD:
+ *   - GET /             → requiere rol ADMINISTRADOR  (lista todos los usuarios)
+ *   - POST /registro    → público (crea cliente, rol fijo)
+ *   - POST /login       → público (compatibilidad legacy; sin JWT)
+ *   - DELETE /{id}      → requiere rol ADMINISTRADOR
+ *   - PUT /{id}         → requiere rol ADMINISTRADOR
+ *
+ * Las reglas de acceso se aplican en SecurityConfig antes de llegar aquí.
+ * El endpoint /registro y /login están explícitamente en la lista pública de SecurityConfig.
  */
+@Tag(name = "5. Gestión de Usuarios",
+     description = "Endpoints para consulta y administración de usuarios del sistema.")
 @RestController
 @RequestMapping({"/api/v1/usuarios", "/api/usuarios"})
 public class UsuarioController {
 
-    /** Código promocional que otorga 10% de descuento vitalicio al cliente */
     public static final String CODIGO_FELICES50 = "FELICES50";
 
-    /** DTO para la petición de registro de nuevos clientes */
-    public record RegistroRequest(String nombre, String correo, String password, String fechaNacimiento, String codigoPromo) {}
+    /** DTO solo para /registro del UsuarioController (sin campo 'rol') */
+    public record RegistroRequest(
+        String nombre, String correo, String password,
+        String fechaNacimiento, String codigoPromo
+    ) {}
 
-    /** DTO para las credenciales de inicio de sesión */
+    /**
+     * DTO legacy para /login.
+     * Retorna el usuario sin JWT (el frontend debería usar /api/v1/auth/login en su lugar).
+     */
     public record LoginRequest(String correo, String password) {}
 
     private final UsuarioRepository repo;
@@ -40,25 +59,58 @@ public class UsuarioController {
         this.encoder = encoder;
     }
 
-    /**
-     * Retorna la lista de usuarios registrados.
-     * Nota de seguridad: La contraseña nunca se incluye en las respuestas JSON gracias a @JsonProperty(WRITE_ONLY).
-     * @return Lista de usuarios.
-     */
+    // ── SOLO ADMINISTRADOR ─────────────────────────────────────────────────────
+
+    @Operation(summary = "Listar todos los usuarios",
+               description = "Requiere rol ADMINISTRADOR. Retorna todos los usuarios sin exponer contraseñas.")
+    @ApiResponse(responseCode = "200", description = "Lista obtenida")
+    @ApiResponse(responseCode = "401", description = "Sin token JWT")
+    @ApiResponse(responseCode = "403", description = "Rol insuficiente (requiere ADMINISTRADOR)")
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     public List<Usuario> listar() {
         return repo.findAll();
     }
 
+    @Operation(summary = "Obtener usuario por ID",
+               description = "Requiere rol ADMINISTRADOR.")
+    @ApiResponse(responseCode = "200", description = "Usuario encontrado")
+    @ApiResponse(responseCode = "403", description = "Rol insuficiente")
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/{id}")
+    public Usuario obtener(@PathVariable Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+    }
+
+    @Operation(summary = "Eliminar usuario",
+               description = "Requiere rol ADMINISTRADOR. Elimina una cuenta por ID.")
+    @ApiResponse(responseCode = "204", description = "Eliminado")
+    @ApiResponse(responseCode = "403", description = "Rol insuficiente")
+    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        if (!repo.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
+        repo.deleteById(id);
+    }
+
+    // ── PÚBLICOS (permitidos en SecurityConfig antes del bloque /api/usuarios/**) ──
+
     /**
-     * Registra un nuevo usuario cliente en el sistema.
-     * Valida campos obligatorios, formato de fecha, unicidad de correo
-     * y aplica los beneficios correspondientes según las reglas de negocio.
-     *
-     * @param r Datos de la solicitud de registro.
-     * @return Usuario creado y persistido (sin contraseña expuesta).
-     * @throws ResponseStatusException HTTP 400 si faltan datos o son inválidos, HTTP 409 si el correo ya existe.
+     * Registro público de nuevos clientes.
+     * El rol asignado es SIEMPRE "CLIENTE" — no se acepta ningún rol del body.
      */
+    @Operation(summary = "Registro de cliente (ruta directa)",
+               description = "Ruta alternativa a /api/v1/auth/registro. " +
+                             "Rol asignado siempre es CLIENTE sin importar el body enviado.")
+    @ApiResponse(responseCode = "201", description = "Registrado")
+    @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    @ApiResponse(responseCode = "409", description = "Correo ya en uso")
     @PostMapping("/registro")
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario registrar(@RequestBody RegistroRequest r) {
@@ -73,10 +125,10 @@ public class UsuarioController {
         try {
             nacimiento = LocalDate.parse(r.fechaNacimiento().trim());
         } catch (DateTimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha de nacimiento inválida (AAAA-MM-DD)");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fecha inválida (AAAA-MM-DD)");
         }
         if (nacimiento.isAfter(LocalDate.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La fecha de nacimiento no puede ser futura");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La fecha no puede ser futura");
         }
 
         String correo = r.correo().trim().toLowerCase();
@@ -84,9 +136,6 @@ public class UsuarioController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una cuenta con ese correo");
         }
 
-        // Determinación de beneficios comerciales calculados en el backend:
-        // 1. Clientes mayores a 50 años acceden al beneficio MAYOR_50 (50% de descuento).
-        // 2. Si ingresa el cupón FELICES50, se asigna 10% de descuento.
         List<String> beneficios = new ArrayList<>();
         if (Period.between(nacimiento, LocalDate.now()).getYears() > 50) {
             beneficios.add("MAYOR_50");
@@ -99,33 +148,34 @@ public class UsuarioController {
         u.setNombre(r.nombre().trim());
         u.setCorreo(correo);
         u.setPassword(encoder.encode(r.password()));
-        u.setRol("cliente"); // Todo registro público se asigna con rol cliente por seguridad
+        u.setRol("CLIENTE");   // ← FIJO: nunca elevable desde el body
         u.setFechaNacimiento(nacimiento.toString());
         u.setBeneficios(beneficios);
         return repo.save(u);
     }
 
     /**
-     * Autentica a un usuario contra las credenciales almacenadas con BCrypt.
-     *
-     * @param r Credenciales de acceso (correo y contraseña plana).
-     * @return El perfil del usuario autenticado si las credenciales coinciden.
-     * @throws ResponseStatusException HTTP 401 si las credenciales son inválidas.
+     * Login legacy (sin JWT). Retorna el objeto usuario si las credenciales son válidas.
+     * El frontend debería preferir /api/v1/auth/login que sí incluye JWT en la respuesta.
      */
+    @Operation(summary = "Inicio de sesión (ruta directa, sin JWT)",
+               description = "Verifica credenciales y retorna el perfil. " +
+                             "Para obtener un token use /api/v1/auth/login.")
+    @ApiResponse(responseCode = "200", description = "Credenciales válidas")
+    @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
     @PostMapping("/login")
     public Usuario login(@RequestBody LoginRequest r) {
-        Usuario u = (vacio(r.correo()) || r.password() == null)
-                ? null
-                : repo.findByCorreoIgnoreCase(r.correo().trim()).orElse(null);
-        if (u == null || !encoder.matches(r.password(), u.getPassword())) {
+        if (vacio(r.correo()) || r.password() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Correo y contraseña son requeridos");
+        }
+        Usuario u = repo.findByCorreoIgnoreCase(r.correo().trim())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas"));
+        if (!encoder.matches(r.password(), u.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas");
         }
         return u;
     }
 
-    /**
-     * Valida si una cadena de texto es nula o se encuentra en blanco.
-     */
     private static boolean vacio(String s) {
         return s == null || s.isBlank();
     }
