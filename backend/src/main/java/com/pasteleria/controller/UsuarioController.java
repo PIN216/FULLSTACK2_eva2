@@ -4,10 +4,7 @@ import com.pasteleria.model.Usuario;
 import com.pasteleria.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-<<<<<<< HEAD
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-=======
->>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-<<<<<<< HEAD
  * Controlador REST para administración de usuarios.
  * Rutas: /api/v1/usuarios y /api/usuarios
  *
@@ -30,21 +26,11 @@ import java.util.List;
  *   - POST /registro    → público (crea cliente, rol fijo)
  *   - POST /login       → público (compatibilidad legacy; sin JWT)
  *   - DELETE /{id}      → requiere rol ADMINISTRADOR
- *   - PUT /{id}         → requiere rol ADMINISTRADOR
  *
  * Las reglas de acceso se aplican en SecurityConfig antes de llegar aquí.
- * El endpoint /registro y /login están explícitamente en la lista pública de SecurityConfig.
  */
 @Tag(name = "5. Gestión de Usuarios",
      description = "Endpoints para consulta y administración de usuarios del sistema.")
-=======
- * Controlador REST para la administración y consulta de usuarios.
- * Maneja el ciclo de vida de clientes, encriptación de contraseñas con BCrypt
- * y asignación de beneficios comerciales (promociones por edad y cupones).
- * Rutas: /api/v1/usuarios y /api/usuarios
- */
-@Tag(name = "5. Gestión de Usuarios", description = "Endpoints para consulta de usuarios del sistema y operaciones de compatibilidad.")
->>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
 @RestController
 @RequestMapping({"/api/v1/usuarios", "/api/usuarios"})
 public class UsuarioController {
@@ -71,7 +57,6 @@ public class UsuarioController {
         this.encoder = encoder;
     }
 
-<<<<<<< HEAD
     // ── SOLO ADMINISTRADOR ─────────────────────────────────────────────────────
 
     @Operation(summary = "Listar todos los usuarios",
@@ -80,16 +65,6 @@ public class UsuarioController {
     @ApiResponse(responseCode = "401", description = "Sin token JWT")
     @ApiResponse(responseCode = "403", description = "Rol insuficiente (requiere ADMINISTRADOR)")
     @SecurityRequirement(name = "Bearer Authentication")
-=======
-    /**
-     * Retorna la lista de usuarios registrados.
-     * Nota de seguridad: La contraseña nunca se incluye en las respuestas JSON gracias a @JsonProperty(WRITE_ONLY).
-     * @return Lista de usuarios.
-     */
-    @Operation(summary = "Listar usuarios", description = "Retorna la lista de usuarios registrados sin exponer credenciales. Requiere rol ADMINISTRADOR.")
-    @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida")
-    @ApiResponse(responseCode = "403", description = "Acceso denegado (requiere rol ADMINISTRADOR)")
->>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
     @GetMapping
     public List<Usuario> listar() {
         return repo.findAll();
@@ -124,21 +99,11 @@ public class UsuarioController {
 
     // ── PÚBLICOS (permitidos en SecurityConfig antes del bloque /api/usuarios/**) ──
 
-    /**
-     * Registro público de nuevos clientes.
-     * El rol asignado es SIEMPRE "CLIENTE" — no se acepta ningún rol del body.
-     */
-<<<<<<< HEAD
     @Operation(summary = "Registro de cliente (ruta directa)",
                description = "Ruta alternativa a /api/v1/auth/registro. " +
                              "Rol asignado siempre es CLIENTE sin importar el body enviado.")
     @ApiResponse(responseCode = "201", description = "Registrado")
     @ApiResponse(responseCode = "400", description = "Datos inválidos")
-=======
-    @Operation(summary = "Registro de usuario (endpoint directo)", description = "Registra un cliente nuevo y calcula beneficios de descuento según edad y cupón.")
-    @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente")
-    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
->>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
     @ApiResponse(responseCode = "409", description = "Correo ya en uso")
     @PostMapping("/registro")
     @ResponseStatus(HttpStatus.CREATED)
@@ -177,23 +142,15 @@ public class UsuarioController {
         u.setNombre(r.nombre().trim());
         u.setCorreo(correo);
         u.setPassword(encoder.encode(r.password()));
-        u.setRol("CLIENTE");   // ← FIJO: nunca elevable desde el body
+        u.setRol("CLIENTE");   // FIJO: nunca elevable desde el body
         u.setFechaNacimiento(nacimiento.toString());
         u.setBeneficios(beneficios);
         return repo.save(u);
     }
 
-    /**
-     * Login legacy (sin JWT). Retorna el objeto usuario si las credenciales son válidas.
-     * El frontend debería preferir /api/v1/auth/login que sí incluye JWT en la respuesta.
-     */
-<<<<<<< HEAD
     @Operation(summary = "Inicio de sesión (ruta directa, sin JWT)",
                description = "Verifica credenciales y retorna el perfil. " +
                              "Para obtener un token use /api/v1/auth/login.")
-=======
-    @Operation(summary = "Inicio de sesión (endpoint directo)", description = "Autentica al usuario verificando su contraseña cifrada con BCrypt.")
->>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
     @ApiResponse(responseCode = "200", description = "Credenciales válidas")
     @ApiResponse(responseCode = "401", description = "Credenciales incorrectas")
     @PostMapping("/login")

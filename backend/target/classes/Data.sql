@@ -1,6 +1,0 @@
--- ====================================================================
--- Script SQL de inicialización para Pastelería Mil Sabores
--- NOTA: Este archivo ya no es necesario ya que DatosIniciales.java
--- maneja la siembra idempotente de datos al arrancar la aplicación.
--- Se mantiene vacío para compatibilidad con spring.sql.init.mode=never
--- ====================================================================
