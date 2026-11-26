@@ -16,7 +16,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -51,12 +52,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // ── Rol desde BD (fuente de verdad), NO desde el token ──────────────
             Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreoIgnoreCase(correo);
+<<<<<<< HEAD
 
             if (usuarioOpt.isPresent()) {
                 Usuario usuario = usuarioOpt.get();
 
                 // normalizarRol garantiza ADMINISTRADOR | VENDEDOR | CLIENTE
                 String rolNormalizado = Usuario.normalizarRol(usuario.getRol());
+=======
+            String rolCrudo = usuarioOpt.map(Usuario::getRol).orElse(rolToken);
+
+            String rolNormalizado = (rolCrudo != null ? rolCrudo.toUpperCase().trim().replace("ROLE_", "") : "CLIENTE");
+            if ("ADMIN".equals(rolNormalizado)) {
+                rolNormalizado = "ADMINISTRADOR";
+            }
+
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + rolNormalizado));
+            if ("ADMINISTRADOR".equals(rolNormalizado)) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            }
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            usuarioOpt.orElse(null),
+                            null,
+                            authorities
+                    );
+>>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
 
                 // Spring Security espera el prefijo ROLE_
                 SimpleGrantedAuthority authority =

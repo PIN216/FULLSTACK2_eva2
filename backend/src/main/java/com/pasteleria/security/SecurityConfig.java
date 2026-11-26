@@ -54,12 +54,23 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(UsuarioRepository usuarioRepository) {
         return username -> usuarioRepository.findByCorreoIgnoreCase(username)
                 .map(u -> {
+<<<<<<< HEAD
                     // Normalización defensiva: el rol en BD siempre debe ser ADMINISTRADOR/VENDEDOR/CLIENTE
                     String rol = com.pasteleria.model.Usuario.normalizarRol(u.getRol());
                     return User.builder()
                             .username(u.getCorreo())
                             .password(u.getPassword() != null ? u.getPassword() : "")
                             .roles(rol)  // Spring agrega "ROLE_" automáticamente
+=======
+                    String rol = u.getRol() != null ? u.getRol().toUpperCase().trim().replace("ROLE_", "") : "CLIENTE";
+                    if ("ADMIN".equals(rol)) {
+                        rol = "ADMINISTRADOR";
+                    }
+                    return User.builder()
+                            .username(u.getCorreo())
+                            .password(u.getPassword() != null ? u.getPassword() : "")
+                            .roles(rol)
+>>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
                             .build();
                 })
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
@@ -104,6 +115,7 @@ public class SecurityConfig {
                     "/api/v1/auth/refresh", "/api/auth/refresh"
                 ).permitAll()
 
+<<<<<<< HEAD
                 // Ruta legacy de UsuarioController (solo login/registro, NO el GET de lista)
                 .requestMatchers(HttpMethod.POST,
                     "/api/v1/usuarios/login", "/api/usuarios/login",
@@ -135,6 +147,53 @@ public class SecurityConfig {
                     "/api/v1/ordenes", "/api/v1/ordenes/**",
                     "/api/ordenes", "/api/ordenes/**"
                 ).hasAnyRole("ADMINISTRADOR", "VENDEDOR")
+=======
+                        // Creación de Órdenes / Boletas (Clientes o anónimos en checkout)
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/ordenes", "/api/v1/ordenes/**",
+                                "/api/ordenes", "/api/ordenes/**",
+                                "/api/v1/boletas", "/api/v1/boletas/**",
+                                "/api/boletas", "/api/boletas/**"
+                        ).permitAll()
+
+                        // Consulta de Órdenes / Boletas: Permitido para Administrador y Vendedor
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/ordenes", "/api/v1/ordenes/**",
+                                "/api/ordenes", "/api/ordenes/**",
+                                "/api/v1/boletas", "/api/v1/boletas/**",
+                                "/api/boletas", "/api/boletas/**"
+                        ).hasAnyRole("ADMINISTRADOR", "ADMIN", "VENDEDOR")
+
+                        // Operaciones de Modificación de Catálogo (Solo Administrador)
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/productos", "/api/v1/productos/**",
+                                "/api/productos", "/api/productos/**"
+                        ).hasAnyRole("ADMINISTRADOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/v1/productos", "/api/v1/productos/**",
+                                "/api/productos", "/api/productos/**"
+                        ).hasAnyRole("ADMINISTRADOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/v1/productos", "/api/v1/productos/**",
+                                "/api/productos", "/api/productos/**"
+                        ).hasAnyRole("ADMINISTRADOR", "ADMIN")
+
+                        // Operaciones de Categorías (Solo Administrador)
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/categorias", "/api/v1/categorias/**",
+                                "/api/categorias", "/api/categorias/**"
+                        ).hasAnyRole("ADMINISTRADOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/v1/categorias", "/api/v1/categorias/**",
+                                "/api/categorias", "/api/categorias/**"
+                        ).hasAnyRole("ADMINISTRADOR", "ADMIN")
+
+                        // Gestión de Usuarios (Solo Administrador)
+                        .requestMatchers(
+                                "/api/v1/usuarios", "/api/v1/usuarios/**",
+                                "/api/usuarios", "/api/usuarios/**"
+                        ).hasAnyRole("ADMINISTRADOR", "ADMIN")
+>>>>>>> 157a1e9a56f636a192c0a9eadebbcc6601ecca2e
 
                 .requestMatchers(HttpMethod.PUT,
                     "/api/v1/ordenes", "/api/v1/ordenes/**",
